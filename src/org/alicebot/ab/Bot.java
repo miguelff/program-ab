@@ -18,8 +18,21 @@ package org.alicebot.ab;
         Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
         Boston, MA  02110-1301, USA.
 */
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.miguelff.alicebot.ab.IOResource;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
 /**
  * Class representing the AIML bot
@@ -38,33 +51,7 @@ public class Bot {
     public String name=MagicStrings.unknown_bot_name;
     public HashMap<String, AIMLSet> setMap = new HashMap<String, AIMLSet>();
     public HashMap<String, AIMLMap> mapMap = new HashMap<String, AIMLMap>();
-
-    /**
-     * Set all directory path variables for this bot
-     *
-     * @param root        root directory of Program AB
-     * @param name        name of bot
-     */
-    public void setAllPaths (String root, String name) {
-        MagicStrings.bot_path = root+"/bots";
-        MagicStrings.bot_name_path = MagicStrings.bot_path+"/"+name;
-        System.out.println("Name = "+name+" Path = "+MagicStrings.bot_name_path);
-        MagicStrings.aiml_path = MagicStrings.bot_name_path+"/aiml";
-        MagicStrings.aimlif_path = MagicStrings.bot_name_path+"/aimlif";
-        MagicStrings.config_path = MagicStrings.bot_name_path+"/config";
-        MagicStrings.log_path = MagicStrings.bot_name_path+"/logs";
-        MagicStrings.sets_path = MagicStrings.bot_name_path+"/sets";
-        MagicStrings.maps_path = MagicStrings.bot_name_path+"/maps";
-        System.out.println(MagicStrings.root_path);
-        System.out.println(MagicStrings.bot_path);
-        System.out.println(MagicStrings.bot_name_path);
-        System.out.println(MagicStrings.aiml_path);
-        System.out.println(MagicStrings.aimlif_path);
-        System.out.println(MagicStrings.config_path);
-        System.out.println(MagicStrings.log_path);
-        System.out.println(MagicStrings.sets_path);
-        System.out.println(MagicStrings.maps_path);
-    }
+   
 
     /**
      * Constructor (default action, default path, default bot name)
@@ -78,17 +65,7 @@ public class Bot {
      * @param name
      */
     public Bot(String name) {
-        this(name, MagicStrings.root_path);
-    }
-
-    /**
-     * Constructor (default action)
-     *
-     * @param name
-     * @param path
-     */
-    public Bot(String name, String path) {
-        this(name, path, "auto");
+        this(name, "auto");
     }
 
     /**
@@ -98,9 +75,9 @@ public class Bot {
      * @param path     root path of Program AB
      * @param action   Program AB action
      */
-    public Bot(String name, String path, String action) {
+    public Bot(String name, String action) {
         this.name = name;
-        setAllPaths(path, name);
+        MagicStrings.setAllPaths(name);
         this.brain = new Graphmaster(this);
         this.inputGraph = new Graphmaster(this);
         this.learnfGraph = new Graphmaster(this);
@@ -120,13 +97,11 @@ public class Bot {
         AIMLMap predecessor = new AIMLMap(MagicStrings.map_predecessor);
         mapMap.put(MagicStrings.map_predecessor, predecessor);
         //System.out.println("setMap = "+setMap);
-        Date aimlDate = new Date(new File(MagicStrings.aiml_path).lastModified());
-        Date aimlIFDate = new Date(new File(MagicStrings.aimlif_path).lastModified());
+        Date aimlDate = new Date(ResourceProvider.IO.getResource(MagicStrings.aiml_path).getLastModified());
+        Date aimlIFDate = new Date(ResourceProvider.IO.getResource(MagicStrings.aimlif_path).getLastModified());
         System.out.println("AIML modified "+aimlDate+" AIMLIF modified "+aimlIFDate);
         readDeletedIFCategories();
         readUnfinishedIFCategories();
-        MagicStrings.pannous_api_key = Utilities.getPannousAPIKey();
-        MagicStrings.pannous_login = Utilities.getPannousLogin();
         if (action.equals("aiml2csv")) addCategoriesFromAIML();
         else if (action.equals("csv2aiml")) addCategoriesFromAIMLIF();
         else if (aimlDate.after(aimlIFDate)) {
@@ -192,12 +167,12 @@ public class Bot {
         try {
             // Directory path here
             String file;
-            File folder = new File(MagicStrings.aiml_path);
-            if (folder.exists()) {
-                File[] listOfFiles = folder.listFiles();
+            IOResource folder = ResourceProvider.IO.getResource(MagicStrings.aiml_path);
+            if (folder.hasNested()) {
+                List<IOResource> listOfFiles = folder.getNested();
                 System.out.println("Loading AIML files from "+MagicStrings.aiml_path);
-                for (File listOfFile : listOfFiles) {
-                    if (listOfFile.isFile()) {
+                for (IOResource listOfFile : listOfFiles) {
+                    if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(".aiml") || file.endsWith(".AIML")) {
                             System.out.println(file);
@@ -228,12 +203,12 @@ public class Bot {
         try {
             // Directory path here
             String file;
-            File folder = new File(MagicStrings.aimlif_path);
-            if (folder.exists()) {
-                File[] listOfFiles = folder.listFiles();
+            IOResource folder = ResourceProvider.IO.getResource(MagicStrings.aimlif_path);
+            if (folder.hasNested()) {
+            	List<IOResource> listOfFiles = folder.getNested();
                 System.out.println("Loading AIML files from "+MagicStrings.aimlif_path);
-                for (File listOfFile : listOfFiles) {
-                    if (listOfFile.isFile()) {
+                for (IOResource listOfFile : listOfFiles) {
+                    if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(MagicStrings.aimlif_file_suffix) || file.endsWith(MagicStrings.aimlif_file_suffix.toUpperCase())) {
                             //System.out.println(file);
@@ -302,7 +277,7 @@ public class Bot {
      * @param fileName   file name of AIMLIF file
      */
     public void readCertainIFCategories(Graphmaster graph, String fileName) {
-        File file = new File(MagicStrings.aimlif_path+"/"+fileName+MagicStrings.aimlif_file_suffix);
+    	IOResource file = ResourceProvider.IO.getResource(MagicStrings.aimlif_path+"/"+fileName+MagicStrings.aimlif_file_suffix);        
         if (file.exists()) {
             try {
                 ArrayList<Category> deletedCategories = readIFCategories(MagicStrings.aimlif_path+"/"+fileName+MagicStrings.aimlif_file_suffix);
@@ -325,8 +300,8 @@ public class Bot {
     public void writeCertainIFCategories(Graphmaster graph, String file) {
         if (MagicBooleans.trace_mode) System.out.println("writeCertainIFCaegories "+file+" size= "+graph.getCategories().size());
         writeIFCategories(graph.getCategories(), file+MagicStrings.aimlif_file_suffix);
-        File dir = new File(MagicStrings.aimlif_path);
-        dir.setLastModified(new Date().getTime());
+        IOResource dir = ResourceProvider.IO.getResource(MagicStrings.aimlif_path);
+        dir.touch();
     }
 
     /**
@@ -359,11 +334,11 @@ public class Bot {
     public void writeIFCategories (ArrayList<Category> cats, String filename)  {
         //System.out.println("writeIFCategories "+filename);
         BufferedWriter bw = null;
-        File existsPath = new File(MagicStrings.aimlif_path);
+        IOResource existsPath = ResourceProvider.IO.getResource(MagicStrings.aimlif_path);
         if (existsPath.exists())
         try {
             //Construct the bw object
-            bw = new BufferedWriter(new FileWriter(MagicStrings.aimlif_path+"/"+filename)) ;
+            bw = new BufferedWriter(new OutputStreamWriter(ResourceProvider.IO.outputFor(MagicStrings.aimlif_path+"/"+filename))) ;
             for (Category category : cats) {
                 bw.write(Category.categoryToIF(category));
                 bw.newLine();
@@ -400,7 +375,7 @@ public class Bot {
                 String fileName = c.getFilename();
                 if (fileMap.containsKey(fileName)) bw = fileMap.get(fileName);
                 else {
-                    bw = new BufferedWriter(new FileWriter(MagicStrings.aimlif_path+"/"+fileName+MagicStrings.aimlif_file_suffix));
+                    bw = new BufferedWriter(new OutputStreamWriter(ResourceProvider.IO.outputFor(MagicStrings.aimlif_path+"/"+fileName+MagicStrings.aimlif_file_suffix)));
                     fileMap.put(fileName, bw);
 
                 }
@@ -425,8 +400,8 @@ public class Bot {
             }
 
         }
-        File dir = new File(MagicStrings.aimlif_path);
-        dir.setLastModified(new Date().getTime());
+        IOResource dir = ResourceProvider.IO.getResource(MagicStrings.aimlif_path);
+        dir.touch();
     }
 
     /**
@@ -450,7 +425,7 @@ public class Bot {
                 if (fileMap.containsKey(fileName)) bw = fileMap.get(fileName);
                 else {
                     String copyright = Utilities.getCopyright(this, fileName);
-                    bw = new BufferedWriter(new FileWriter(MagicStrings.aiml_path+"/"+fileName));
+                    bw = new BufferedWriter(new OutputStreamWriter(ResourceProvider.IO.outputFor(MagicStrings.aiml_path+"/"+fileName)));
                     fileMap.put(fileName, bw);
                     bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "\n" +
                             "<aiml>\n");
@@ -479,8 +454,8 @@ public class Bot {
             }
 
         }
-        File dir = new File(MagicStrings.aiml_path);
-        dir.setLastModified(new Date().getTime());
+        IOResource dir =  ResourceProvider.IO.getResource(MagicStrings.aiml_path);
+        dir.touch();
     }
 
     /**
@@ -562,10 +537,8 @@ public class Bot {
      * @param filename    file containing sample normalized inputs
      */
     public void classifyInputs (String filename) {
-        try{
-            FileInputStream fstream = new FileInputStream(filename);
-            // Get the object
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+        try{            
+            BufferedReader br = new BufferedReader(new InputStreamReader(ResourceProvider.IO.inputFor(filename)));
             String strLine;
             //Read File Line By Line
             int count = 0;
@@ -591,11 +564,8 @@ public class Bot {
      */
     public void graphInputs (String filename) {
         try{
-            // Open the file that is the first
-            // command line parameter
-            FileInputStream fstream = new FileInputStream(filename);
             // Get the object
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            BufferedReader br = new BufferedReader(new InputStreamReader(ResourceProvider.IO.inputFor(filename)));
             String strLine;
             //Read File Line By Line
             while ((strLine = br.readLine()) != null)   {
@@ -640,11 +610,8 @@ public class Bot {
     public ArrayList<Category> readIFCategories (String filename) {
         ArrayList<Category> categories = new ArrayList<Category>();
         try{
-            // Open the file that is the first
-            // command line parameter
-            FileInputStream fstream = new FileInputStream(filename);
             // Get the object
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            BufferedReader br = new BufferedReader(new InputStreamReader(ResourceProvider.IO.inputFor(filename)));
             String strLine;
             //Read File Line By Line
             while ((strLine = br.readLine()) != null)   {
@@ -703,12 +670,12 @@ public class Bot {
         try {
             // Directory path here
             String file;
-            File folder = new File(MagicStrings.sets_path);
-            if (folder.exists()) {
-                File[] listOfFiles = folder.listFiles();
+            IOResource folder = ResourceProvider.IO.getResource(MagicStrings.sets_path);
+            if (folder.hasNested()) {
+            	List<IOResource> listOfFiles = folder.getNested();
                 System.out.println("Loading AIML Sets files from "+MagicStrings.sets_path);
-                for (File listOfFile : listOfFiles) {
-                    if (listOfFile.isFile()) {
+                for (IOResource listOfFile : listOfFiles) {
+                    if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(".txt") || file.endsWith(".TXT")) {
                             System.out.println(file);
@@ -736,12 +703,12 @@ public class Bot {
         try {
             // Directory path here
             String file;
-            File folder = new File(MagicStrings.maps_path);
+            IOResource folder = ResourceProvider.IO.getResource(MagicStrings.maps_path);
             if (folder.exists()) {
-                File[] listOfFiles = folder.listFiles();
+            	List<IOResource> listOfFiles = folder.getNested();
                 System.out.println("Loading AIML Map files from "+MagicStrings.maps_path);
-                for (File listOfFile : listOfFiles) {
-                    if (listOfFile.isFile()) {
+                for (IOResource listOfFile : listOfFiles) {
+                    if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(".txt") || file.endsWith(".TXT")) {
                             System.out.println(file);

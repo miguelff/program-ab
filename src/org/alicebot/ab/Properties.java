@@ -18,8 +18,13 @@ package org.alicebot.ab;
         Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
         Boston, MA  02110-1301, USA.
 */
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+
+import org.miguelff.alicebot.ab.IOResource;
+import org.miguelff.alicebot.ab.ResourceProvider;
 /**
  * Bot Properties
 */
@@ -43,17 +48,18 @@ public class Properties extends HashMap<String, String> {
      * @param in    Input stream
      */
     public void getPropertiesFromInputStream(InputStream in)  {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String strLine;
         //Read File Line By Line
         try {
-        while ((strLine = br.readLine()) != null)   {
-            if (strLine.contains(":")) {
-                String property = strLine.substring(0, strLine.indexOf(":"));
-                String value = strLine.substring(strLine.indexOf(":")+1);
-                put(property, value);
-            }
-        }
+        	BufferedReader br = new BufferedReader(new InputStreamReader(in));            
+        	while ((strLine = br.readLine()) != null)   {
+        		if (strLine.contains(":")) {
+        			String property = strLine.substring(0, strLine.indexOf(":"));
+        			String value = strLine.substring(strLine.indexOf(":")+1);
+        			put(property, value);
+        		}
+        	}
+        	br.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -69,14 +75,9 @@ public class Properties extends HashMap<String, String> {
         try {
             // Open the file that is the first
             // command line parameter
-            File file = new File(filename);
+        	IOResource file = ResourceProvider.IO.getResource(filename);
             if (file.exists()) {
-                System.out.println("Exists: "+filename);
-                FileInputStream fstream = new FileInputStream(filename);
-                // Get the object
-                getPropertiesFromInputStream(fstream);
-                //Close the input stream
-                fstream.close();
+                getPropertiesFromInputStream(file.input());               
             }
         } catch (Exception e){//Catch exception if any
             System.err.println("Error: " + e.getMessage());

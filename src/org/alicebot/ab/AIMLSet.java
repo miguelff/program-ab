@@ -19,10 +19,17 @@ package org.alicebot.ab;
         Boston, MA  02110-1301, USA.
 */
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.miguelff.alicebot.ab.IOResource;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
 /**
  * implements AIML Sets
@@ -32,9 +39,7 @@ public class AIMLSet extends HashSet<String> {
     int maxLength = 1; // there are no empty sets
     String host; // for external sets
     String botid; // for external sets
-    boolean isExternal = false;
-
-
+  
     /**
      * constructor
      * @param name    name of set
@@ -45,17 +50,7 @@ public class AIMLSet extends HashSet<String> {
         if (setName.equals(MagicStrings.natural_number_set_name))  maxLength = 1;
     }
     public boolean contains(String s) {
-        if (isExternal)  System.out.println("External "+setName+" contains "+s+"?");
-        else  System.out.println("Internal "+setName+" contains "+s+"?");
-        if (isExternal && MagicBooleans.enable_external_sets) {
-            String[] split = s.split(" ");
-            if (split.length > maxLength) return false;
-            String query = MagicStrings.set_member_string+setName.toUpperCase()+" "+s;
-            String response = Sraix.sraix(null, query, "false", null, host, botid, null, "0");
-            System.out.println("External "+setName+" contains "+s+"? "+response);
-            if (response.equals("true")) return true;
-            else return false;
-        } else if (setName.equals(MagicStrings.natural_number_set_name)) {
+        if (setName.equals(MagicStrings.natural_number_set_name)) {
             Pattern numberPattern = Pattern.compile("[0-9]+");
             Matcher numberMatcher = numberPattern.matcher(s);
             Boolean isanumber = numberMatcher.matches();
@@ -64,12 +59,11 @@ public class AIMLSet extends HashSet<String> {
         }
         else return super.contains(s);
     }
+    
     public  void writeAIMLSet () {
         System.out.println("Writing AIML Set "+setName);
         try{
-            // Create file
-            FileWriter fstream = new FileWriter(MagicStrings.sets_path+"/"+setName+".txt");
-            BufferedWriter out = new BufferedWriter(fstream);
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(ResourceProvider.IO.outputFor(MagicStrings.sets_path+"/"+setName+".txt")));
             for (String p : this) {
 
                 out.write(p.trim());
@@ -82,26 +76,16 @@ public class AIMLSet extends HashSet<String> {
         }
     }
     public int readAIMLSetFromInputStream(InputStream in, Bot bot)  {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String strLine;
         int cnt = 0;
         //Read File Line By Line
         try {
+        	BufferedReader br = new BufferedReader(new InputStreamReader(in));
             while ((strLine = br.readLine()) != null  && strLine.length() > 0)   {
                 cnt++;
                 //strLine = bot.preProcessor.normalize(strLine).toUpperCase();
-                // assume the set is pre-normalized for faster loading
-                if (strLine.startsWith("external")) {
-                    String[] splitLine = strLine.split(":");
-                    if (splitLine.length >= 4) {
-                        host = splitLine[1];
-                        botid = splitLine[2];
-                        maxLength = Integer.parseInt(splitLine[3]);
-                        isExternal = true;
-                        System.out.println("Created external set at "+host+" "+botid);
-                    }
-                }
-                else {
+                // assume the set is pre-normalized for faster loading                
+                if (!strLine.startsWith("external")) {
                     strLine = strLine.toUpperCase().trim();
                     String [] splitLine = strLine.split(" ");
                     int length = splitLine.length;
@@ -112,6 +96,7 @@ public class AIMLSet extends HashSet<String> {
                 /*Category c = new Category(0, "ISA"+setName.toUpperCase()+" "+strLine.toUpperCase(), "*", "*", "true", MagicStrings.null_aiml_file);
                 bot.brain.addCategory(c);*/
             }
+            br.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -123,12 +108,10 @@ public class AIMLSet extends HashSet<String> {
         try{
             // Open the file that is the first
             // command line parameter
-            File file = new File(MagicStrings.sets_path+"/"+setName+".txt");
+        	IOResource file = ResourceProvider.IO.getResource(MagicStrings.sets_path+"/"+setName+".txt");
             if (file.exists()) {
-                FileInputStream fstream = new FileInputStream(MagicStrings.sets_path+"/"+setName+".txt");
                 // Get the object
-                readAIMLSetFromInputStream(fstream, bot);
-                fstream.close();
+                readAIMLSetFromInputStream(file.input(), bot);                
             }
             else System.out.println(MagicStrings.sets_path+"/"+setName+".txt not found");
         }catch (Exception e){//Catch exception if any

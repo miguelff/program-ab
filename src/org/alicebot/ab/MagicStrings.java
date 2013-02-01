@@ -23,15 +23,14 @@ package org.alicebot.ab;
  * Global values for many strings in Program AB
  */
 public class MagicStrings {
+	public static String copyRight = "File: [filename]\nAuthor: [botmaster]\nLast modified: [date]\n\nThis AIML file is part of the [botname] [version] chat bot knowledge base.\n\nThe [botname] brain is Copyright &copy; [YYYY] by [organization].\n\nThe [botname] brain is released under the terms of the GNU Lesser General\nPublic License, as published by the Free Software Foundation.\n\nThis file is distributed WITHOUT ANY WARRANTY; without even the \nimplied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  \n\nFor more information see [url]\n\n\n";
     public static String programNameVersion = "Program AB 0.0.3.8 beta -- AI Foundation Reference AIML 2.0 implementation";
     public static String aimlif_split_char = ",";
     public static String default_bot = "super";
     public static String default_language = "EN";
     public static String aimlif_split_char_name = "\\#Comma";
     public static String aimlif_file_suffix = ".csv";
-    public static String ab_sample_file = "sample.txt";
-    public static String pannous_api_key = "guest";
-    public static String pannous_login = "test-user";
+    public static String ab_sample_file = "sample.txt";    
     public static String unknown_aiml_file = "unknown_aiml_file.aiml";
     public static String deleted_aiml_file = "deleted.aiml";
     public static String learnf_aiml_file = "learnf.aiml";
@@ -75,9 +74,8 @@ public class MagicStrings {
     public static String remote_set_key = "external";
     public static String natural_number_set_name = "number";
     public static String map_successor = "successor";
-    public static String map_predecessor = "predecessor";
-    public static String root_path = "c:/ab";
-    public static String bot_path = root_path+"/bots";
+    public static String map_predecessor = "predecessor"; 
+    public static String bot_path = "/bots";
     public static String bot_name_path = bot_path+"/super";
     public static String aimlif_path = bot_path+"/aimlif";
     public static String aiml_path = bot_path+"/aiml";
@@ -85,5 +83,21 @@ public class MagicStrings {
     public static String log_path = bot_path+"/log";
     public static String sets_path = bot_path+"/sets";
     public static String maps_path = bot_path+"/maps";
+    
+    /**
+     * Set all directory path variables for this bot
+     *
+     * @param root        root directory of Program AB
+     * @param name        name of bot
+     */
+    public static void setAllPaths (String name) {        
+        bot_name_path = bot_path+"/"+name;
+        aiml_path = bot_name_path+"/aiml";
+        aimlif_path = bot_name_path+"/aimlif";
+        config_path = bot_name_path+"/config";
+        log_path = bot_name_path+"/logs";
+        sets_path = bot_name_path+"/sets";
+        maps_path = bot_name_path+"/maps";        ;
+    }
 }
 

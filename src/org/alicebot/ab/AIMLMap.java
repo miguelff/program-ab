@@ -18,8 +18,13 @@ package org.alicebot.ab;
         Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
         Boston, MA  02110-1301, USA.
 */
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+
+import org.miguelff.alicebot.ab.IOResource;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
    /**
     * implements AIML Map
@@ -67,14 +72,7 @@ public class AIMLMap extends HashMap<String, String> {
             } catch (Exception ex) {
                 return MagicStrings.unknown_map_value;
             }
-        }
-        else if (isExternal && MagicBooleans.enable_external_sets) {
-            //String[] split = key.split(" ");
-            String query = mapName.toUpperCase()+" "+key;
-            String response = Sraix.sraix(null, query, MagicStrings.unknown_map_value, null, host, botid, null, "0");
-            System.out.println("External "+mapName+"("+key+")="+response);
-            value = response;
-        }
+        }        
         else value = super.get(key);
         if (value == null) value = MagicStrings.unknown_map_value;
         System.out.println("AIMLMap get "+key+"="+value);
@@ -102,10 +100,10 @@ public class AIMLMap extends HashMap<String, String> {
         */
     public int readAIMLMapFromInputStream(InputStream in, Bot bot)  {
         int cnt=0;
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String strLine;
         //Read File Line By Line
         try {
+        	BufferedReader br = new BufferedReader(new InputStreamReader(in));            
             while ((strLine = br.readLine()) != null  && strLine.length() > 0)   {
                 String[] splitLine = strLine.split(":");
                 //System.out.println("AIMLMap line="+strLine);
@@ -128,8 +126,11 @@ public class AIMLMap extends HashMap<String, String> {
                     }
                 }
             }
+            br.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+        	
         }
         return cnt;
     }
@@ -144,12 +145,9 @@ public class AIMLMap extends HashMap<String, String> {
         try{
             // Open the file that is the first
             // command line parameter
-            File file = new File(MagicStrings.maps_path+"/"+mapName+".txt");
+            IOResource file = ResourceProvider.IO.getResource(MagicStrings.maps_path+"/"+mapName+".txt");
             if (file.exists()) {
-                FileInputStream fstream = new FileInputStream(MagicStrings.maps_path+"/"+mapName+".txt");
-                // Get the object
-                readAIMLMapFromInputStream(fstream, bot);
-                fstream.close();
+                readAIMLMapFromInputStream(file.input(), bot);                
             }
             else System.out.println(MagicStrings.maps_path+"/"+mapName+".txt not found");
         }catch (Exception e){//Catch exception if any

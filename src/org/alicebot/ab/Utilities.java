@@ -38,72 +38,21 @@ public class Utilities {
         for (String s : strings) set.add(s);
         return set;
     }
-    public static String getFileFromInputStream(InputStream in)  {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String strLine;
-        //Read File Line By Line
-        String contents = "";
-        try {
-            while ((strLine = br.readLine()) != null)   {
-                if (strLine.length() == 0) contents += "\n";
-                else contents  += strLine+"\n";
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return contents.trim();
-    }
-    public static String getFile (String filename) {
-        String contents = "";
-        try {
-            File file = new File(filename);
-            if (file.exists()) {
-                //System.out.println("Found file "+filename);
-                FileInputStream fstream = new FileInputStream(filename);
-                // Get the object
-                contents = getFileFromInputStream(fstream) ;
-                fstream.close();
-            }
-        } catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
-        }
-        //System.out.println("getFile: "+contents);
-        return contents;
-    }
-    public static String getCopyrightFromInputStream(InputStream in)  {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String strLine;
-        //Read File Line By Line
-        String copyright = "";
-        try {
-            while ((strLine = br.readLine()) != null)   {
-                if (strLine.length() == 0) copyright += "\n";
-                else copyright += "<!-- "+strLine+" -->\n";
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return copyright;
-    }
+   
     public static String getCopyright (Bot bot, String AIMLFilename) {
         String copyright = "";
         String year = CalendarUtils.year();
         String date = CalendarUtils.date();
-        try {
-                copyright = getFile(MagicStrings.config_path+"/copyright.txt") ;
-                String[] splitCopyright = copyright.split("\n");
-                copyright = "";
-                for (int i = 0; i < splitCopyright.length; i++) {
-                    copyright += "<!-- "+splitCopyright[i]+" -->\n";
-                }
-                copyright = copyright.replace("[url]", bot.properties.get("url"));
-                copyright = copyright.replace("[date]", date);
-                copyright = copyright.replace("[YYYY]", year);
-                copyright = copyright.replace("[version]", bot.properties.get("version"));
-                copyright = copyright.replace("[botname]", bot.name.toUpperCase());
-                copyright = copyright.replace("[filename]", AIMLFilename);
-                copyright = copyright.replace("[botmaster]", bot.properties.get("botmaster"));
-                copyright = copyright.replace("[organization]", bot.properties.get("organization"));
+        try {                
+            copyright = MagicStrings.copyRight;                		                
+            copyright = copyright.replace("[url]", bot.properties.get("url"));
+            copyright = copyright.replace("[date]", date);
+            copyright = copyright.replace("[YYYY]", year);
+            copyright = copyright.replace("[version]", bot.properties.get("version"));
+            copyright = copyright.replace("[botname]", bot.name.toUpperCase());
+            copyright = copyright.replace("[filename]", AIMLFilename);
+            copyright = copyright.replace("[botmaster]", bot.properties.get("botmaster"));
+            copyright = copyright.replace("[organization]", bot.properties.get("organization"));
         } catch (Exception e){//Catch exception if any
             System.err.println("Error: " + e.getMessage());
         }
@@ -111,16 +60,6 @@ public class Utilities {
         return copyright;
     }
 
-    public static String getPannousAPIKey () {
-       String apiKey = getFile(MagicStrings.config_path+"/pannous-apikey.txt");
-       if (apiKey.equals("")) apiKey = MagicStrings.pannous_api_key;
-       return apiKey;
-    }
-    public static String getPannousLogin () {
-        String login = getFile(MagicStrings.config_path+"/pannous-login.txt");
-        if (login.equals("")) login = MagicStrings.pannous_login;
-        return login;
-    }
     /**
      * Returns if a character is one of Chinese-Japanese-Korean characters.
      *

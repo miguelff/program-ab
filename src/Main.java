@@ -18,25 +18,25 @@
         Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
         Boston, MA  02110-1301, USA.
 */
-import org.alicebot.ab.*;
-import org.alicebot.ab.utils.IOUtils;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-public class Main {
-    public static void main (String[] args) {
-        //AIMLWriter.familiarContactAIML();
-        //MagicBooleans.trace_mode = true;
-        //new PreProcessor(new Bot("super")).normalizeFile("c:/ab/data/normal.txt", "c:/ab/data/newnormal.txt");;
+import org.alicebot.ab.AB;
+import org.alicebot.ab.Bot;
+import org.alicebot.ab.Category;
+import org.alicebot.ab.Chat;
+import org.alicebot.ab.Graphmaster;
+import org.alicebot.ab.MagicBooleans;
+import org.alicebot.ab.MagicStrings;
+import org.alicebot.ab.utils.IOUtils;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
-        MagicStrings.root_path = System.getProperty("user.dir");
-        System.out.println("Working Directory = " + MagicStrings.root_path);
-        mainFunction(args);
-    }
-    public static void mainFunction (String[] args) {
+public class Main {
+	
+    public static void main (String[] args) {
         String botName = "super";
         String action = "chat";
         System.out.println(MagicStrings.programNameVersion);
@@ -54,14 +54,15 @@ public class Main {
         }
         System.out.println("trace mode = "+MagicBooleans.trace_mode);
         Graphmaster.enableShortCuts = true;
-        Bot bot = new Bot(botName, MagicStrings.root_path, action); //
+        Bot bot = new Bot(botName, action); //
         if (bot.brain.getCategories().size() < 100) bot.brain.printgraph();
         if (action.equals("chat")) testChat(bot, MagicBooleans.trace_mode);
-        else if (action.equals("test")) testSuite(bot, MagicStrings.root_path+"/data/find.txt");
+        else if (action.equals("test")) testSuite(bot, "/data/find.txt");
         else if (action.equals("ab")) testAB(bot);
         else if (action.equals("aiml2csv") || action.equals("csv2aiml")) convert(bot, action);
         else if (action.equals("abwq")) AB.abwq(bot);
     }
+    
     public static void convert(Bot bot, String action) {
         if (action.equals("aiml2csv")) bot.writeAIMLIFFiles();
         else if (action.equals("csv2aiml")) bot.writeAIMLFiles();
@@ -119,6 +120,7 @@ public class Main {
         System.out.println("Human: "+request);
         System.out.println("Robot: "+response);
     }
+    
     public static void testSuite (Bot bot, String filename) {
         try{
             AB.passed.readAIMLSet(bot);
@@ -126,9 +128,8 @@ public class Main {
             System.out.println("Passed "+AB.passed.size()+" samples.");
             String textLine="";
             Chat chatSession = new Chat(bot);
-            FileInputStream fstream = new FileInputStream(filename);
-            // Get the object
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader(ResourceProvider.IO.inputFor(filename)));
             String strLine;
             //Read File Line By Line
             int count = 0;

@@ -34,7 +34,7 @@ public class AB {
     public static boolean sort_mode = true;
     public static boolean filter_atomic_mode = false;
     public static boolean filter_wild_mode = false;
-    public static String logfile = MagicStrings.root_path+"/data/"+MagicStrings.ab_sample_file; //normal.txt";
+    public static String logfile = "/data/"+MagicStrings.ab_sample_file; //normal.txt";
     public static AIMLSet passed = new AIMLSet("passed");
     public static AIMLSet testSet = new AIMLSet("1000");
     public static int runCompletedCnt;
@@ -113,8 +113,7 @@ public class AB {
         */
     public static void ab (Bot bot) {
         String logFile = logfile;
-        MagicBooleans.trace_mode = false;
-        MagicBooleans.enable_external_sets = false;
+        MagicBooleans.trace_mode = false;   
         Timer timer = new Timer();
         bot.brain.nodeStats();
         timer.start();

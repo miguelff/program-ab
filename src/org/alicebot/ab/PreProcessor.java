@@ -20,9 +20,16 @@ package org.alicebot.ab;
 */
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.miguelff.alicebot.ab.IOResource;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
 /**
  * AIML Preprocessor and substitutions
@@ -147,25 +154,26 @@ public class PreProcessor {
      * @return          number of patterns substitutions read
      */
     public int readSubstitutionsFromInputStream(InputStream in, Pattern[] patterns, String[] subs) {
-    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    
     String strLine;
     //Read File Line By Line
     int subCount = 0;
     try {
-    while ((strLine = br.readLine()) != null)   {
-        //System.out.println(strLine);
-        strLine = strLine.trim();
-        Pattern pattern = Pattern.compile("\"(.*?)\",\"(.*?)\"", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(strLine);
-        if (matcher.find() && subCount < MagicNumbers.max_substitutions) {
-            subs[subCount] = matcher.group(2);
-            String quotedPattern = Pattern.quote(matcher.group(1));
-            //System.out.println("quoted pattern="+quotedPattern);
-            patterns[subCount] = Pattern.compile(quotedPattern, Pattern.CASE_INSENSITIVE);
-            subCount++;
-        }
-
-    }
+    	BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    	while ((strLine = br.readLine()) != null)   {
+	        //System.out.println(strLine);
+	        strLine = strLine.trim();
+	        Pattern pattern = Pattern.compile("\"(.*?)\",\"(.*?)\"", Pattern.DOTALL);
+	        Matcher matcher = pattern.matcher(strLine);
+	        if (matcher.find() && subCount < MagicNumbers.max_substitutions) {
+	            subs[subCount] = matcher.group(2);
+	            String quotedPattern = Pattern.quote(matcher.group(1));
+	            //System.out.println("quoted pattern="+quotedPattern);
+	            patterns[subCount] = Pattern.compile(quotedPattern, Pattern.CASE_INSENSITIVE);
+	            subCount++;
+	        }	        
+    	}
+    	br.close();
     } catch (Exception ex) {
         ex.printStackTrace();
     }
@@ -183,16 +191,12 @@ public class PreProcessor {
     int readSubstitutions(String filename, Pattern[] patterns, String[] subs) {
         int subCount = 0;
         try{
-
             // Open the file that is the first
             // command line parameter
-            File file = new File(filename);
-            if (file.exists()) {
-                FileInputStream fstream = new FileInputStream(filename);
+        	IOResource file = ResourceProvider.IO.getResource(filename);
+        	if (file.exists()) {                
                 // Get the object of DataInputStream
-                subCount = readSubstitutionsFromInputStream(fstream, patterns, subs);
-                //Close the input stream
-                fstream.close();
+                subCount = readSubstitutionsFromInputStream(file.input(), patterns, subs);
             }
         }catch (Exception e){//Catch exception if any
             System.err.println("Error: " + e.getMessage());
@@ -223,11 +227,9 @@ public class PreProcessor {
      * @param outfile          output file to write results
      */
     public void normalizeFile (String infile, String outfile) {
-        try{
-            BufferedWriter bw = null;
-            FileInputStream fstream = new FileInputStream(infile);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-            bw = new BufferedWriter(new FileWriter(outfile)) ;
+        try{         
+            BufferedReader br = new BufferedReader(new InputStreamReader(ResourceProvider.IO.inputFor(infile)));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(ResourceProvider.IO.outputFor(outfile))) ;
             String strLine;
             //Read File Line By Line
             while ((strLine = br.readLine()) != null)   {
