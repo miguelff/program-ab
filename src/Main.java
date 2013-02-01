@@ -36,7 +36,12 @@ import org.miguelff.alicebot.ab.ResourceProvider;
 
 public class Main {
 	
-    public static void main (String[] args) {
+    public static void main (String[] args) {    	
+    	if (System.getenv("DEFAULT_FS_DIRECTORY") == null){
+    		System.out.println("Please export DEFAULT_FS_DIRECTORY, to your robot's KB. For instance:");
+    		System.out.println("export DEFAULT_FS_DIRECTORY=/tmp");
+    		System.exit(-1);
+    	}
         String botName = "super";
         String action = "chat";
         System.out.println(MagicStrings.programNameVersion);
@@ -72,19 +77,9 @@ public class Main {
         AB.ab(bot);
         AB.terminalInteraction(bot) ;
     }
-    public static void testShortCuts () {
-        //testChat(new Bot("alice"));
-        //Graphmaster.enableShortCuts = false;
-        //Bot bot = new Bot("alice");
-        //bot.brain.printgraph();
-        //bot.brain.nodeStats();
-        //Graphmaster.enableShortCuts = true;
-        //bot = new Bot("alice");
-        //bot.brain.printgraph();
-        //bot.brain.nodeStats();
-    }
+   
     public static void testChat (Bot bot, boolean traceMode) {
-        Chat chatSession = new Chat(bot);
+        Chat  = new Chat(bot);
 //        bot.preProcessor.normalizeFile("c:/ab/bots/super/aiml/thats.txt", "c:/ab/bots/super/aiml/normalthats.txt");
         bot.brain.nodeStats();
         MagicBooleans.trace_mode = traceMode;
