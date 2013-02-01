@@ -19,13 +19,10 @@ package org.alicebot.ab;
         Boston, MA  02110-1301, USA.
 */
 
-import org.alicebot.ab.utils.IOUtils;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import org.alicebot.ab.utils.IOUtils;
 
 public class AB {
     /**
@@ -166,7 +163,7 @@ public class AB {
         // System.out.println(filteredAtomicCategories.size()+" filtered suggested categories");
         for (Category c : browserCategories)  {
             try {
-            ArrayList samples = new ArrayList(c.getMatches());
+            ArrayList<Object> samples = new ArrayList<Object>(c.getMatches());
             Collections.shuffle(samples);
             int sampleSize = Math.min(MagicNumbers.displayed_input_sample_size, c.getMatches().size());
             for (int i = 0; i < sampleSize; i++) {

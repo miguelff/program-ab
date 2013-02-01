@@ -23,7 +23,7 @@ package org.alicebot.ab;
  * Global values for many strings in Program AB
  */
 public class MagicStrings {
-    public static String programNameVersion = "Program AB 0.0.3.9 beta -- AI Foundation Reference AIML 2.0 implementation";
+    public static String programNameVersion = "Program AB 0.0.3.8 beta -- AI Foundation Reference AIML 2.0 implementation";
     public static String aimlif_split_char = ",";
     public static String default_bot = "super";
     public static String default_language = "EN";

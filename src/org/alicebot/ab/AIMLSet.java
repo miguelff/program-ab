@@ -45,8 +45,8 @@ public class AIMLSet extends HashSet<String> {
         if (setName.equals(MagicStrings.natural_number_set_name))  maxLength = 1;
     }
     public boolean contains(String s) {
-        //if (isExternal)  System.out.println("External "+setName+" contains "+s+"?");
-        //else  System.out.println("Internal "+setName+" contains "+s+"?");
+        if (isExternal)  System.out.println("External "+setName+" contains "+s+"?");
+        else  System.out.println("Internal "+setName+" contains "+s+"?");
         if (isExternal && MagicBooleans.enable_external_sets) {
             String[] split = s.split(" ");
             if (split.length > maxLength) return false;
@@ -59,7 +59,7 @@ public class AIMLSet extends HashSet<String> {
             Pattern numberPattern = Pattern.compile("[0-9]+");
             Matcher numberMatcher = numberPattern.matcher(s);
             Boolean isanumber = numberMatcher.matches();
-            //System.out.println("AIMLSet isanumber '"+s+"' "+isanumber);
+            System.out.println("AIMLSet isanumber '"+s+"' "+isanumber);
             return isanumber;
         }
         else return super.contains(s);

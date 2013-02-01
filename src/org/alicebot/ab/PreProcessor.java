@@ -231,7 +231,7 @@ public class PreProcessor {
             String strLine;
             //Read File Line By Line
             while ((strLine = br.readLine()) != null)   {
-                strLine = normalize(strLine); //.toUpperCase();
+                strLine = normalize(strLine).toUpperCase();
                 bw.write(strLine);
                 bw.newLine();
             }

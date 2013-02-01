@@ -31,7 +31,7 @@ public class Main {
         //AIMLWriter.familiarContactAIML();
         //MagicBooleans.trace_mode = true;
         //new PreProcessor(new Bot("super")).normalizeFile("c:/ab/data/normal.txt", "c:/ab/data/newnormal.txt");;
-        Interval.test();
+
         MagicStrings.root_path = System.getProperty("user.dir");
         System.out.println("Working Directory = " + MagicStrings.root_path);
         mainFunction(args);
@@ -55,7 +55,6 @@ public class Main {
         System.out.println("trace mode = "+MagicBooleans.trace_mode);
         Graphmaster.enableShortCuts = true;
         Bot bot = new Bot(botName, MagicStrings.root_path, action); //
-        bot.preProcessor.normalizeFile("c:/ab/log1.txt", "c:/ab/data/lognormal.txt");
         if (bot.brain.getCategories().size() < 100) bot.brain.printgraph();
         if (action.equals("chat")) testChat(bot, MagicBooleans.trace_mode);
         else if (action.equals("test")) testSuite(bot, MagicStrings.root_path+"/data/find.txt");

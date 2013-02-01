@@ -481,32 +481,8 @@ public class AIMLProcessor {
         String timezone = getAttributeOrTagValue(node, ps, "timezone");
         //System.out.println("Format = "+format+" Locale = "+locale+" Timezone = "+timezone);
         String dateAsString = CalendarUtils.date(jformat, locale, timezone);
-        //System.out.println(dateAsString);
+        System.out.println(dateAsString);
         return dateAsString;
-    }
-
-    /**
-     *    <interval><style>years</style></style><jformat>MMMMMMMMM dd, yyyy</jformat><from>August 2, 1960</from><to><date><jformat>MMMMMMMMM dd, yyyy</jformat></date></to></interval>
-     */
-
-    private static String interval(Node node, ParseState ps)  {
-        HashSet<String> attributeNames = Utilities.stringSet("style","jformat","from","to");
-        String style = getAttributeOrTagValue(node, ps, "style");      // AIML 2.0
-        String jformat = getAttributeOrTagValue(node, ps, "jformat");      // AIML 2.0
-        String from = getAttributeOrTagValue(node, ps, "from");
-        String to = getAttributeOrTagValue(node, ps, "to");
-        if (style == null) style = "years";
-        if (jformat == null) jformat = "MMMMMMMMM dd, yyyy";
-        if (from == null) from = "January 1, 1970";
-        if (to == null) {
-            to = CalendarUtils.date(jformat, null, null);
-        }
-        String result = "unknown";
-        if (style.equals("years")) result = ""+Interval.getYearsBetween(from, to, jformat);
-        if (style.equals("months")) result = ""+Interval.getMonthsBetween(from, to, jformat);
-        if (style.equals("days")) result = ""+Interval.getDaysBetween(from, to, jformat);
-        if (style.equals("hours")) result = ""+Interval.getHoursBetween(from, to, jformat);
-        return result;
     }
 
     /**
@@ -1068,8 +1044,6 @@ public class AIMLProcessor {
             return program(node, ps);
         else if (nodeName.equals("date"))
             return date(node, ps);
-        else if (nodeName.equals("interval"))
-            return interval(node, ps);
         //else if (nodeName.equals("gossip"))       // removed from AIML 2.0
         //    return gossip(node, ps);
         else if (nodeName.equals("think"))
