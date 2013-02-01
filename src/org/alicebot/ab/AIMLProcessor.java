@@ -18,9 +18,9 @@ package org.alicebot.ab;
         Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
         Boston, MA  02110-1301, USA.
 */
+
 import org.alicebot.ab.utils.CalendarUtils;
 import org.alicebot.ab.utils.DomUtils;
-import org.alicebot.ab.utils.IOUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -100,7 +100,7 @@ public class AIMLProcessor {
      */
     public static ArrayList<Category> AIMLToCategories (String directory, String aimlFile) {
         try {
-            ArrayList categories = new ArrayList<Category>();
+            ArrayList<Category> categories = new ArrayList<Category>();
             Node root = DomUtils.parseFile(directory+"/"+aimlFile);      // <aiml> tag
             String language = MagicStrings.default_language;
             if (root.hasAttributes()) {
@@ -652,26 +652,7 @@ public class AIMLProcessor {
         int index=getIndexValue(node, ps);
         return ps.chatSession.responseHistory.getString(index).trim();
     }
-    /**
-     * implements {@code <system>} tag.
-     * Evaluate the contents, and try to execute the result as
-     * a command in the underlying OS shell.
-     * Read back and return the result of this command.
-     *
-     * The timeout parameter allows the botmaster to set a timeout
-     * in ms, so that the <system></system>   command returns eventually.
-     *
-     * @param node     current XML parse node
-     * @param ps       AIML parse state
-     * @return         the result of executing the system command or a string indicating the command failed.
-     */
-    private static String system(Node node, ParseState ps) {
-        HashSet<String> attributeNames = Utilities.stringSet("timeout");
-        //String stimeout = getAttributeOrTagValue(node, ps, "timeout");
-        String evaluatedContents = evalTagContent(node, ps, attributeNames);
-		String result = IOUtils.system(evaluatedContents, MagicStrings.system_failed);
-		return result;
-    }
+  
     /**
      * implements {@code <think>} tag
      *
@@ -1044,12 +1025,8 @@ public class AIMLProcessor {
             return program(node, ps);
         else if (nodeName.equals("date"))
             return date(node, ps);
-        //else if (nodeName.equals("gossip"))       // removed from AIML 2.0
-        //    return gossip(node, ps);
         else if (nodeName.equals("think"))
             return think(node, ps);
-        else if (nodeName.equals("system"))
-            return system(node, ps);
         else if (nodeName.equals("explode"))
             return explode(node, ps);
         else if (nodeName.equals("normalize"))

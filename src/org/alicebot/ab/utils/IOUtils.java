@@ -19,27 +19,5 @@ public class IOUtils {
 		}
 		return textLine;
 	}
-
-
-	public static String system(String evaluatedContents, String failedString) {
-		Runtime rt = Runtime.getRuntime();
-        System.out.println("System "+evaluatedContents);
-        try {
-            Process p = rt.exec(evaluatedContents);
-            InputStream istrm = p.getInputStream();
-            InputStreamReader istrmrdr = new InputStreamReader(istrm);
-            BufferedReader buffrdr = new BufferedReader(istrmrdr);
-            String result = "";
-            String data = "";
-            while ((data = buffrdr.readLine()) != null) {
-                result += data+"\n";
-            }
-            System.out.println("Result = "+result);
-            return result;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return failedString;
-        }
-	}
 }
 
