@@ -28,8 +28,8 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.miguelff.alicebot.ab.IOResource;
 import org.miguelff.alicebot.ab.ResourceProvider;
+import org.miguelff.alicebot.ab.io.IOResource;
 
 /**
  * implements AIML Sets
@@ -54,14 +54,14 @@ public class AIMLSet extends HashSet<String> {
             Pattern numberPattern = Pattern.compile("[0-9]+");
             Matcher numberMatcher = numberPattern.matcher(s);
             Boolean isanumber = numberMatcher.matches();
-            System.out.println("AIMLSet isanumber '"+s+"' "+isanumber);
+            ResourceProvider.Log.info("AIMLSet isanumber '"+s+"' "+isanumber);
             return isanumber;
         }
         else return super.contains(s);
     }
     
     public  void writeAIMLSet () {
-        System.out.println("Writing AIML Set "+setName);
+        ResourceProvider.Log.info("Writing AIML Set "+setName);
         try{
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(ResourceProvider.IO.outputFor(MagicStrings.sets_path+"/"+setName+".txt")));
             for (String p : this) {
@@ -90,7 +90,7 @@ public class AIMLSet extends HashSet<String> {
                     String [] splitLine = strLine.split(" ");
                     int length = splitLine.length;
                     if (length > maxLength) maxLength = length;
-                    //System.out.println("readAIMLSetFromInputStream "+strLine);
+                    //ResourceProvider.Log.info("readAIMLSetFromInputStream "+strLine);
                     add(strLine.trim());
                 }
                 /*Category c = new Category(0, "ISA"+setName.toUpperCase()+" "+strLine.toUpperCase(), "*", "*", "true", MagicStrings.null_aiml_file);
@@ -104,7 +104,7 @@ public class AIMLSet extends HashSet<String> {
     }
 
     public void readAIMLSet (Bot bot) {
-        System.out.println("Reading AIML Set "+MagicStrings.sets_path+"/"+setName+".txt");
+        ResourceProvider.Log.info("Reading AIML Set "+MagicStrings.sets_path+"/"+setName+".txt");
         try{
             // Open the file that is the first
             // command line parameter
@@ -113,7 +113,7 @@ public class AIMLSet extends HashSet<String> {
                 // Get the object
                 readAIMLSetFromInputStream(file.input(), bot);                
             }
-            else System.out.println(MagicStrings.sets_path+"/"+setName+".txt not found");
+            else ResourceProvider.Log.info(MagicStrings.sets_path+"/"+setName+".txt not found");
         }catch (Exception e){//Catch exception if any
             System.err.println("Error: " + e.getMessage());
         }

@@ -28,8 +28,8 @@ import java.io.OutputStreamWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.miguelff.alicebot.ab.IOResource;
 import org.miguelff.alicebot.ab.ResourceProvider;
+import org.miguelff.alicebot.ab.io.IOResource;
 
 /**
  * AIML Preprocessor and substitutions
@@ -62,7 +62,7 @@ public class PreProcessor {
         personCount = readSubstitutions(MagicStrings.config_path +"/person.txt", personPatterns, personSubs);
         person2Count = readSubstitutions(MagicStrings.config_path +"/person2.txt", person2Patterns, person2Subs);
         genderCount = readSubstitutions(MagicStrings.config_path +"/gender.txt", genderPatterns, genderSubs);
-        System.out.println("Preprocessor: "+normalCount+" norms "+personCount+" persons "+person2Count+" person2 ");
+        ResourceProvider.Log.info("Preprocessor: "+normalCount+" norms "+personCount+" persons "+person2Count+" person2 ");
     }
 
     /**
@@ -128,17 +128,17 @@ public class PreProcessor {
             String replacement =  subs[i];
             Pattern p = patterns[i];
             Matcher m = p.matcher(result);
-            //System.out.println(i+" "+patterns[i].pattern()+"-->"+subs[i]);
+            //ResourceProvider.Log.info(i+" "+patterns[i].pattern()+"-->"+subs[i]);
             if (m.find()) {
-                //System.out.println(m.group());
+                //ResourceProvider.Log.info(m.group());
                 result = m.replaceAll(replacement);
             }
 
-            //System.out.println(result);
+            //ResourceProvider.Log.info(result);
         }
         while (result.contains("  ")) result = result.replace("  "," ");
         result = result.trim();
-        //System.out.println("Normalized: "+result);
+        //ResourceProvider.Log.info("Normalized: "+result);
         } catch (Exception ex)    {
             ex.printStackTrace();
         }
@@ -161,14 +161,14 @@ public class PreProcessor {
     try {
     	BufferedReader br = new BufferedReader(new InputStreamReader(in));
     	while ((strLine = br.readLine()) != null)   {
-	        //System.out.println(strLine);
+	        //ResourceProvider.Log.info(strLine);
 	        strLine = strLine.trim();
 	        Pattern pattern = Pattern.compile("\"(.*?)\",\"(.*?)\"", Pattern.DOTALL);
 	        Matcher matcher = pattern.matcher(strLine);
 	        if (matcher.find() && subCount < MagicNumbers.max_substitutions) {
 	            subs[subCount] = matcher.group(2);
 	            String quotedPattern = Pattern.quote(matcher.group(1));
-	            //System.out.println("quoted pattern="+quotedPattern);
+	            //ResourceProvider.Log.info("quoted pattern="+quotedPattern);
 	            patterns[subCount] = Pattern.compile(quotedPattern, Pattern.CASE_INSENSITIVE);
 	            subCount++;
 	        }	        
@@ -214,7 +214,7 @@ public class PreProcessor {
         line = line.replace("。",".");
         line = line.replace("？","?");
         line = line.replace("！","!");
-        //System.out.println("Sentence split "+line);
+        //ResourceProvider.Log.info("Sentence split "+line);
         String result[] = line.split("[\\.!\\?]");
         for (int i = 0; i < result.length; i++) result[i] = result[i].trim();
         return result;

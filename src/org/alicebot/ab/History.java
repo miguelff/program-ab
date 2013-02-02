@@ -1,4 +1,6 @@
 package org.alicebot.ab;
+
+import org.miguelff.alicebot.ab.ResourceProvider;
 /* Program AB Reference AIML 2.0 implementation
         Copyright (C) 2013 ALICE A.I. Foundation
         Contact: info@alicebot.org
@@ -91,8 +93,8 @@ public class History<T> {
     public void printHistory() {
         int i;
         for (i = 0; get(i) != null; i++) {
-            System.out.println(name+"History "+(i+1)+" = "+get(i));
-            System.out.println(String.valueOf(get(i).getClass()).contains("History"));
+            ResourceProvider.Log.info(name+"History "+(i+1)+" = "+get(i));
+            ResourceProvider.Log.info(String.valueOf(get(i).getClass()).contains("History"));
             if (String.valueOf(get(i).getClass()).contains("History")) ((History)get(i)).printHistory();
         }
     }

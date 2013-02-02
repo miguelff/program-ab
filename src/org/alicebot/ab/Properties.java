@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import org.miguelff.alicebot.ab.IOResource;
 import org.miguelff.alicebot.ab.ResourceProvider;
+import org.miguelff.alicebot.ab.io.IOResource;
 /**
  * Bot Properties
 */
@@ -71,7 +71,7 @@ public class Properties extends HashMap<String, String> {
      * @param filename   file containing bot properties
      */
     public void getProperties (String filename) {
-        System.out.println("Get Properties: "+filename);
+        ResourceProvider.Log.info("Get Properties: "+filename);
         try {
             // Open the file that is the first
             // command line parameter

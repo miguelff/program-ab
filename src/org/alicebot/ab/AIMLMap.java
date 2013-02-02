@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import org.miguelff.alicebot.ab.IOResource;
 import org.miguelff.alicebot.ab.ResourceProvider;
+import org.miguelff.alicebot.ab.io.IOResource;
 
    /**
     * implements AIML Map
@@ -75,7 +75,7 @@ public class AIMLMap extends HashMap<String, String> {
         }        
         else value = super.get(key);
         if (value == null) value = MagicStrings.unknown_map_value;
-        System.out.println("AIMLMap get "+key+"="+value);
+        ResourceProvider.Log.info("AIMLMap get "+key+"="+value);
         return value;
     }
 
@@ -87,7 +87,7 @@ public class AIMLMap extends HashMap<String, String> {
         * @return       the value
         */
     public String put(String key, String value) {
-        //System.out.println("AIMLMap put "+key+"="+value);
+        //ResourceProvider.Log.info("AIMLMap put "+key+"="+value);
         return super.put(key, value);
     }
 
@@ -106,7 +106,7 @@ public class AIMLMap extends HashMap<String, String> {
         	BufferedReader br = new BufferedReader(new InputStreamReader(in));            
             while ((strLine = br.readLine()) != null  && strLine.length() > 0)   {
                 String[] splitLine = strLine.split(":");
-                //System.out.println("AIMLMap line="+strLine);
+                //ResourceProvider.Log.info("AIMLMap line="+strLine);
                 if (splitLine.length >= 2) {
                     cnt++;
                     if (strLine.startsWith(MagicStrings.remote_map_key)) {
@@ -114,7 +114,7 @@ public class AIMLMap extends HashMap<String, String> {
                             host = splitLine[1];
                             botid = splitLine[2];
                             isExternal = true;
-                            System.out.println("Created external map at "+host+" "+botid);
+                            ResourceProvider.Log.info("Created external map at "+host+" "+botid);
                         }
                     }
                     else {
@@ -141,7 +141,7 @@ public class AIMLMap extends HashMap<String, String> {
         * @param bot          the bot associated with this map.
         */
     public void readAIMLMap (Bot bot) {
-        System.out.println("Reading AIML Map "+MagicStrings.maps_path+"/"+mapName+".txt");
+        ResourceProvider.Log.info("Reading AIML Map "+MagicStrings.maps_path+"/"+mapName+".txt");
         try{
             // Open the file that is the first
             // command line parameter
@@ -149,7 +149,7 @@ public class AIMLMap extends HashMap<String, String> {
             if (file.exists()) {
                 readAIMLMapFromInputStream(file.input(), bot);                
             }
-            else System.out.println(MagicStrings.maps_path+"/"+mapName+".txt not found");
+            else ResourceProvider.Log.info(MagicStrings.maps_path+"/"+mapName+".txt not found");
         }catch (Exception e){//Catch exception if any
             System.err.println("Error: " + e.getMessage());
         }

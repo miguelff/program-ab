@@ -1,6 +1,7 @@
 package org.alicebot.ab;
 
 import org.alicebot.ab.utils.MemoryUtils;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
 
 /* Program AB Reference AIML 2.0 implementation
@@ -46,7 +47,7 @@ public class MemStats {
     long heapFreeSize = MemoryUtils.freeMemory();
     long diff = heapSize - prevHeapSize;
     prevHeapSize = heapSize;
-    System.out.println("Heap "+heapSize+" MaxSize "+heapMaxSize+" Free "+heapFreeSize+" Diff "+diff);
+    ResourceProvider.Log.info("Heap "+heapSize+" MaxSize "+heapMaxSize+" Free "+heapFreeSize+" Diff "+diff);
 
     }
 

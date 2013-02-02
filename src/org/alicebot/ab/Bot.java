@@ -31,8 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.miguelff.alicebot.ab.IOResource;
 import org.miguelff.alicebot.ab.ResourceProvider;
+import org.miguelff.alicebot.ab.io.IOResource;
 
 /**
  * Class representing the AIML bot
@@ -96,27 +96,27 @@ public class Bot {
         mapMap.put(MagicStrings.map_successor, successor);
         AIMLMap predecessor = new AIMLMap(MagicStrings.map_predecessor);
         mapMap.put(MagicStrings.map_predecessor, predecessor);
-        //System.out.println("setMap = "+setMap);
+        //ResourceProvider.Log.info("setMap = "+setMap);
         Date aimlDate = new Date(ResourceProvider.IO.getResource(MagicStrings.aiml_path).getLastModified());
         Date aimlIFDate = new Date(ResourceProvider.IO.getResource(MagicStrings.aimlif_path).getLastModified());
-        System.out.println("AIML modified "+aimlDate+" AIMLIF modified "+aimlIFDate);
+        ResourceProvider.Log.info("AIML modified "+aimlDate+" AIMLIF modified "+aimlIFDate);
         readDeletedIFCategories();
         readUnfinishedIFCategories();
         if (action.equals("aiml2csv")) addCategoriesFromAIML();
         else if (action.equals("csv2aiml")) addCategoriesFromAIMLIF();
         else if (aimlDate.after(aimlIFDate)) {
-            System.out.println("AIML modified after AIMLIF");
+            ResourceProvider.Log.info("AIML modified after AIMLIF");
             addCategoriesFromAIML();
             writeAIMLIFFiles();
         }
         else {
             addCategoriesFromAIMLIF();
             if (brain.getCategories().size()==0) {
-                System.out.println("No AIMLIF Files found.  Looking for AIML");
+                ResourceProvider.Log.info("No AIMLIF Files found.  Looking for AIML");
                 addCategoriesFromAIML();
             }
         }
-        System.out.println("--> Bot "+name+" "+brain.getCategories().size()+" completed "+deletedGraph.getCategories().size()+" deleted "+unfinishedGraph.getCategories().size()+" unfinished");
+        ResourceProvider.Log.info("--> Bot "+name+" "+brain.getCategories().size()+" completed "+deletedGraph.getCategories().size()+" deleted "+unfinishedGraph.getCategories().size()+" unfinished");
     }
 
     /**
@@ -128,18 +128,18 @@ public class Bot {
     void addMoreCategories (String file, ArrayList<Category> moreCategories) {
         if (file.contains(MagicStrings.deleted_aiml_file)) {
             for (Category c : moreCategories) {
-                //System.out.println("Delete "+c.getPattern());
+                //ResourceProvider.Log.info("Delete "+c.getPattern());
                 deletedGraph.addCategory(c);
             }
         } else if (file.contains(MagicStrings.unfinished_aiml_file)) {
             for (Category c : moreCategories) {
-                //System.out.println("Delete "+c.getPattern());
+                //ResourceProvider.Log.info("Delete "+c.getPattern());
                 if (brain.findNode(c) == null)
                 unfinishedGraph.addCategory(c);
-                else System.out.println("unfinished "+c.inputThatTopic()+" found in brain");
+                else ResourceProvider.Log.info("unfinished "+c.inputThatTopic()+" found in brain");
             }
         } else if (file.contains(MagicStrings.learnf_aiml_file) ) {
-            System.out.println("Reading Learnf file");
+            ResourceProvider.Log.info("Reading Learnf file");
             for (Category c : moreCategories) {
                 brain.addCategory(c);
                 learnfGraph.addCategory(c);
@@ -148,7 +148,7 @@ public class Bot {
             //this.categories.addAll(moreCategories);
         } else {
             for (Category c : moreCategories) {
-                //System.out.println("Brain size="+brain.root.size());
+                //ResourceProvider.Log.info("Brain size="+brain.root.size());
                 //brain.printgraph();
                 brain.addCategory(c);
                 patternGraph.addCategory(c);
@@ -170,28 +170,28 @@ public class Bot {
             IOResource folder = ResourceProvider.IO.getResource(MagicStrings.aiml_path);
             if (folder.hasNested()) {
                 List<IOResource> listOfFiles = folder.getNested();
-                System.out.println("Loading AIML files from "+MagicStrings.aiml_path);
+                ResourceProvider.Log.info("Loading AIML files from "+MagicStrings.aiml_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(".aiml") || file.endsWith(".AIML")) {
-                            System.out.println(file);
+                            ResourceProvider.Log.info(file);
                             try {
                                 ArrayList<Category> moreCategories = AIMLProcessor.AIMLToCategories(MagicStrings.aiml_path, file);
                                 addMoreCategories(file, moreCategories);
                             } catch (Exception iex) {
-                                System.out.println("Problem loading " + file);
+                                ResourceProvider.Log.info("Problem loading " + file);
                                 iex.printStackTrace();
                             }
                         }
                     }
                 }
             }
-            else System.out.println("addCategories: "+MagicStrings.aiml_path+" does not exist.");
+            else ResourceProvider.Log.info("addCategories: "+MagicStrings.aiml_path+" does not exist.");
         } catch (Exception ex)  {
             ex.printStackTrace();
         }
-        System.out.println("Loaded " + brain.getCategories().size() + " categories in " + timer.elapsedTimeSecs() + " sec");
+        ResourceProvider.Log.info("Loaded " + brain.getCategories().size() + " categories in " + timer.elapsedTimeSecs() + " sec");
     }
 
     /**
@@ -206,29 +206,29 @@ public class Bot {
             IOResource folder = ResourceProvider.IO.getResource(MagicStrings.aimlif_path);
             if (folder.hasNested()) {
             	List<IOResource> listOfFiles = folder.getNested();
-                System.out.println("Loading AIML files from "+MagicStrings.aimlif_path);
+                ResourceProvider.Log.info("Loading AIML files from "+MagicStrings.aimlif_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(MagicStrings.aimlif_file_suffix) || file.endsWith(MagicStrings.aimlif_file_suffix.toUpperCase())) {
-                            //System.out.println(file);
+                            //ResourceProvider.Log.info(file);
                             try {
                                 ArrayList<Category> moreCategories = readIFCategories(MagicStrings.aimlif_path + "/" + file);
                                 addMoreCategories(file, moreCategories);
                              //   MemStats.memStats();
                             } catch (Exception iex) {
-                                System.out.println("Problem loading " + file);
+                                ResourceProvider.Log.info("Problem loading " + file);
                                 iex.printStackTrace();
                             }
                         }
                     }
                 }
             }
-            else System.out.println("addCategories: "+MagicStrings.aimlif_path+" does not exist.");
+            else ResourceProvider.Log.info("addCategories: "+MagicStrings.aimlif_path+" does not exist.");
         } catch (Exception ex)  {
             ex.printStackTrace();
         }
-        System.out.println("Loaded " + brain.getCategories().size() + " categories in " + timer.elapsedTimeSecs() + " sec");
+        ResourceProvider.Log.info("Loaded " + brain.getCategories().size() + " categories in " + timer.elapsedTimeSecs() + " sec");
     }
 
     /**
@@ -261,9 +261,9 @@ public class Bot {
      */
     public void writeQuit() {
         writeAIMLIFFiles();
-        System.out.println("Wrote AIMLIF Files");
+        ResourceProvider.Log.info("Wrote AIMLIF Files");
         writeAIMLFiles();
-        System.out.println("Wrote AIML Files");
+        ResourceProvider.Log.info("Wrote AIML Files");
         writeDeletedIFCategories();
         updateUnfinishedCategories();
         writeUnfinishedIFCategories();
@@ -282,13 +282,13 @@ public class Bot {
             try {
                 ArrayList<Category> deletedCategories = readIFCategories(MagicStrings.aimlif_path+"/"+fileName+MagicStrings.aimlif_file_suffix);
                 for (Category d : deletedCategories) graph.addCategory(d);
-                System.out.println("readCertainIFCategories "+graph.getCategories().size()+" categories from "+fileName+MagicStrings.aimlif_file_suffix);
+                ResourceProvider.Log.info("readCertainIFCategories "+graph.getCategories().size()+" categories from "+fileName+MagicStrings.aimlif_file_suffix);
             } catch (Exception iex) {
-                System.out.println("Problem loading " + fileName);
+                ResourceProvider.Log.info("Problem loading " + fileName);
                 iex.printStackTrace();
             }
         }
-        else System.out.println("No "+MagicStrings.deleted_aiml_file+MagicStrings.aimlif_file_suffix+" file found");
+        else ResourceProvider.Log.info("No "+MagicStrings.deleted_aiml_file+MagicStrings.aimlif_file_suffix+" file found");
     }
 
     /**
@@ -298,7 +298,7 @@ public class Bot {
      * @param file        the destination AIMLIF file
      */
     public void writeCertainIFCategories(Graphmaster graph, String file) {
-        if (MagicBooleans.trace_mode) System.out.println("writeCertainIFCaegories "+file+" size= "+graph.getCategories().size());
+        if (MagicBooleans.trace_mode) ResourceProvider.Log.info("writeCertainIFCaegories "+file+" size= "+graph.getCategories().size());
         writeIFCategories(graph.getCategories(), file+MagicStrings.aimlif_file_suffix);
         IOResource dir = ResourceProvider.IO.getResource(MagicStrings.aimlif_path);
         dir.touch();
@@ -332,7 +332,7 @@ public class Bot {
      * @param filename       AIMLIF filename
      */
     public void writeIFCategories (ArrayList<Category> cats, String filename)  {
-        //System.out.println("writeIFCategories "+filename);
+        //ResourceProvider.Log.info("writeIFCategories "+filename);
         BufferedWriter bw = null;
         IOResource existsPath = ResourceProvider.IO.getResource(MagicStrings.aimlif_path);
         if (existsPath.exists())
@@ -364,7 +364,7 @@ public class Bot {
      * Write all AIMLIF files from bot brain
      */
     public void writeAIMLIFFiles () {
-        System.out.println("writeAIMLIFFiles");
+        ResourceProvider.Log.info("writeAIMLIFFiles");
         HashMap<String, BufferedWriter> fileMap = new HashMap<String, BufferedWriter>();
         if (deletedGraph.getCategories().size() > 0) writeDeletedIFCategories();
         ArrayList<Category> brainCategories = brain.getCategories();
@@ -419,7 +419,7 @@ public class Bot {
 
             if (!c.getFilename().equals(MagicStrings.null_aiml_file))
             try {
-                //System.out.println("Writing "+c.getCategoryNumber()+" "+c.inputThatTopic());
+                //ResourceProvider.Log.info("Writing "+c.getCategoryNumber()+" "+c.inputThatTopic());
                 BufferedWriter bw;
                 String fileName = c.getFilename();
                 if (fileMap.containsKey(fileName)) bw = fileMap.get(fileName);
@@ -477,7 +477,7 @@ public class Bot {
      */
     public void findPatterns() {
         findPatterns(inputGraph.root, "");
-        System.out.println(leafPatternCnt+ " Leaf Patterns "+starPatternCnt+" Star Patterns");
+        ResourceProvider.Log.info(leafPatternCnt+ " Leaf Patterns "+starPatternCnt+" Star Patterns");
     }
 
     /** find patterns recursively
@@ -487,20 +487,20 @@ public class Bot {
      */
     void findPatterns(Nodemapper node, String partialPatternThatTopic) {
         if (NodemapperOperator.isLeaf(node)) {
-            //System.out.println("LEAF: "+node.category.getActivationCnt()+". "+partialPatternThatTopic);
+            //ResourceProvider.Log.info("LEAF: "+node.category.getActivationCnt()+". "+partialPatternThatTopic);
             if (node.category.getActivationCnt() > MagicNumbers.node_activation_cnt) {
-                //System.out.println("LEAF: "+node.category.getActivationCnt()+". "+partialPatternThatTopic+" "+node.shortCut);    //Start writing to the output stream
+                //ResourceProvider.Log.info("LEAF: "+node.category.getActivationCnt()+". "+partialPatternThatTopic+" "+node.shortCut);    //Start writing to the output stream
                 leafPatternCnt ++;
                 try {
                     String categoryPatternThatTopic = "";
                     if (node.shortCut) {
-                        //System.out.println("Partial patternThatTopic = "+partialPatternThatTopic);
+                        //ResourceProvider.Log.info("Partial patternThatTopic = "+partialPatternThatTopic);
                         categoryPatternThatTopic = partialPatternThatTopic + " <THAT> * <TOPIC> *";
                     }
                     else categoryPatternThatTopic = partialPatternThatTopic;
                     Category c = new Category(0, categoryPatternThatTopic,  MagicStrings.blank_template, MagicStrings.unknown_aiml_file);
-                    //if (brain.existsCategory(c)) System.out.println(c.inputThatTopic()+" Exists");
-                    //if (deleted.existsCategory(c)) System.out.println(c.inputThatTopic()+ " Deleted");
+                    //if (brain.existsCategory(c)) ResourceProvider.Log.info(c.inputThatTopic()+" Exists");
+                    //if (deleted.existsCategory(c)) ResourceProvider.Log.info(c.inputThatTopic()+ " Deleted");
                     if (!brain.existsCategory(c) && !deletedGraph.existsCategory(c) && !unfinishedGraph.existsCategory(c)) {
                         patternGraph.addCategory(c);
                         suggestedCategories.add(c);
@@ -511,12 +511,12 @@ public class Bot {
             }
         }
         if(NodemapperOperator.size(node) > MagicNumbers.node_size) {
-            //System.out.println("STAR: "+NodemapperOperator.size(node)+". "+partialPatternThatTopic+" * <that> * <topic> *");
+            //ResourceProvider.Log.info("STAR: "+NodemapperOperator.size(node)+". "+partialPatternThatTopic+" * <that> * <topic> *");
             starPatternCnt ++;
             try {
                 Category c = new Category(0, partialPatternThatTopic+" * <THAT> * <TOPIC> *",  MagicStrings.blank_template, MagicStrings.unknown_aiml_file);
-                //if (brain.existsCategory(c)) System.out.println(c.inputThatTopic()+" Exists");
-                //if (deleted.existsCategory(c)) System.out.println(c.inputThatTopic()+ " Deleted");
+                //if (brain.existsCategory(c)) ResourceProvider.Log.info(c.inputThatTopic()+" Exists");
+                //if (deleted.existsCategory(c)) ResourceProvider.Log.info(c.inputThatTopic()+ " Deleted");
                 if (!brain.existsCategory(c) && !deletedGraph.existsCategory(c) && !unfinishedGraph.existsCategory(c)) {
                     patternGraph.addCategory(c);
                     suggestedCategories.add(c);
@@ -544,7 +544,7 @@ public class Bot {
             int count = 0;
             while ((strLine = br.readLine())!= null)   {
                 // Print the content on the console
-                //System.out.println("Classifying "+strLine);
+                //ResourceProvider.Log.info("Classifying "+strLine);
                 if (strLine.startsWith("Human: ")) strLine = strLine.substring("Human: ".length(), strLine.length());
                 Nodemapper match = patternGraph.match(strLine, "unknown", "unknown");
                 match.category.incrementActivationCnt();
@@ -577,7 +577,7 @@ public class Bot {
                   c.incrementActivationCnt();
                 }
                 else node.category.incrementActivationCnt();
-                //System.out.println("Root branches="+g.root.size());
+                //ResourceProvider.Log.info("Root branches="+g.root.size());
             }
             //Close the input stream
             br.close();
@@ -620,7 +620,7 @@ public class Bot {
                     Category c = Category.IFToCategory(strLine);
                     categories.add(c);
                 } catch (Exception ex) {
-                    System.out.println("Invalid AIMLIF in "+filename+" line "+strLine);
+                    ResourceProvider.Log.info("Invalid AIMLIF in "+filename+" line "+strLine);
                 }
             }
             //Close the input stream
@@ -649,9 +649,9 @@ public class Bot {
             String topic = node.category.getTopic().replace("*", "XXX").replace("_", "XXX");
             Nodemapper match = brain.match(input, that, topic);
             if (match != node) {
-                System.out.println("" + Graphmaster.inputThatTopic(input, that, topic));
-                System.out.println("MATCHED:     "+match.category.inputThatTopic());
-                System.out.println("SHOULD MATCH:"+node.category.inputThatTopic());
+                ResourceProvider.Log.info("" + Graphmaster.inputThatTopic(input, that, topic));
+                ResourceProvider.Log.info("MATCHED:     "+match.category.inputThatTopic());
+                ResourceProvider.Log.info("SHOULD MATCH:"+node.category.inputThatTopic());
             }
         }
         else {
@@ -673,14 +673,14 @@ public class Bot {
             IOResource folder = ResourceProvider.IO.getResource(MagicStrings.sets_path);
             if (folder.hasNested()) {
             	List<IOResource> listOfFiles = folder.getNested();
-                System.out.println("Loading AIML Sets files from "+MagicStrings.sets_path);
+                ResourceProvider.Log.info("Loading AIML Sets files from "+MagicStrings.sets_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(".txt") || file.endsWith(".TXT")) {
-                            System.out.println(file);
+                            ResourceProvider.Log.info(file);
                             String setName = file.substring(0, file.length()-".txt".length());
-                            System.out.println("Read AIML Set "+setName);
+                            ResourceProvider.Log.info("Read AIML Set "+setName);
                             AIMLSet aimlSet = new AIMLSet(setName);
                             aimlSet.readAIMLSet(this);
                             setMap.put(setName, aimlSet);
@@ -688,7 +688,7 @@ public class Bot {
                     }
                 }
             }
-            else System.out.println("addAIMLSets: "+MagicStrings.sets_path+" does not exist.");
+            else ResourceProvider.Log.info("addAIMLSets: "+MagicStrings.sets_path+" does not exist.");
         } catch (Exception ex)  {
             ex.printStackTrace();
         }
@@ -706,14 +706,14 @@ public class Bot {
             IOResource folder = ResourceProvider.IO.getResource(MagicStrings.maps_path);
             if (folder.exists()) {
             	List<IOResource> listOfFiles = folder.getNested();
-                System.out.println("Loading AIML Map files from "+MagicStrings.maps_path);
+                ResourceProvider.Log.info("Loading AIML Map files from "+MagicStrings.maps_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
                         file = listOfFile.getName();
                         if (file.endsWith(".txt") || file.endsWith(".TXT")) {
-                            System.out.println(file);
+                            ResourceProvider.Log.info(file);
                             String mapName = file.substring(0, file.length()-".txt".length());
-                            System.out.println("Read AIML Map "+mapName);
+                            ResourceProvider.Log.info("Read AIML Map "+mapName);
                             AIMLMap aimlMap = new AIMLMap(mapName);
                             aimlMap.readAIMLMap(this);
                             mapMap.put(mapName, aimlMap);
@@ -721,7 +721,7 @@ public class Bot {
                     }
                 }
             }
-            else System.out.println("addCategories: "+MagicStrings.aiml_path+" does not exist.");
+            else ResourceProvider.Log.info("addCategories: "+MagicStrings.aiml_path+" does not exist.");
         } catch (Exception ex)  {
             ex.printStackTrace();
         }

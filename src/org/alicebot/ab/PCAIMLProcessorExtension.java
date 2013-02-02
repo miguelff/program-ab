@@ -19,10 +19,11 @@ package org.alicebot.ab;
         Boston, MA  02110-1301, USA.
 */
 
+import java.util.Set;
+
+import org.miguelff.alicebot.ab.ResourceProvider;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.util.Set;
 
 /**
  * This is just a stub to make the contactaction.aiml file work on a PC
@@ -61,26 +62,26 @@ public class PCAIMLProcessorExtension implements AIMLProcessorExtension {
                 emailAddress = AIMLProcessor.evalTagContent(childList.item(i), ps, null);
             }
         }
-        System.out.println("Adding new contact "+displayName+" "+phoneType+" "+dialNumber+" "+emailType+" "+emailAddress+" "+birthday);
+        ResourceProvider.Log.info("Adding new contact "+displayName+" "+phoneType+" "+dialNumber+" "+emailType+" "+emailAddress+" "+birthday);
         Contact contact = new Contact(displayName, phoneType, dialNumber, emailType, emailAddress, birthday);
         return "";
     }
     private String contactId(Node node, ParseState ps) {
         String displayName = AIMLProcessor.evalTagContent(node, ps, null);
         String result = Contact.contactId(displayName);
-        //System.out.println("contactId("+displayName+")="+result);
+        //ResourceProvider.Log.info("contactId("+displayName+")="+result);
         return result;
     }
     private String multipleIds(Node node, ParseState ps){
         String contactName = AIMLProcessor.evalTagContent(node, ps, null);
         String result = Contact.multipleIds(contactName);
-        //System.out.println("multipleIds("+contactName+")="+result);
+        //ResourceProvider.Log.info("multipleIds("+contactName+")="+result);
         return result;
     }
     private String displayName(Node node, ParseState ps){
         String id = AIMLProcessor.evalTagContent(node, ps, null);
         String result = Contact.displayName(id);
-        //System.out.println("displayName("+id+")="+result);
+        //ResourceProvider.Log.info("displayName("+id+")="+result);
         return result;
     }
     private String dialNumber(Node node, ParseState ps) {
@@ -96,7 +97,7 @@ public class PCAIMLProcessorExtension implements AIMLProcessorExtension {
             }
         }
         String result = Contact.dialNumber(type, id);
-        //System.out.println("dialNumber("+id+")="+result);
+        //ResourceProvider.Log.info("dialNumber("+id+")="+result);
         return result;
     }
 
@@ -113,7 +114,7 @@ public class PCAIMLProcessorExtension implements AIMLProcessorExtension {
             }
         }
         String result = Contact.emailAddress(type, id);
-        //System.out.println("emailAddress("+id+")="+result);
+        //ResourceProvider.Log.info("emailAddress("+id+")="+result);
         return result;
     }
 
@@ -121,7 +122,7 @@ public class PCAIMLProcessorExtension implements AIMLProcessorExtension {
     private String contactBirthday(Node node, ParseState ps){
         String id = AIMLProcessor.evalTagContent(node, ps, null);
         String result = Contact.birthday(id);
-        //System.out.println("birthday("+id+")="+result);
+        //ResourceProvider.Log.info("birthday("+id+")="+result);
         return result;
     }
     public String recursEval(Node node, ParseState ps) {

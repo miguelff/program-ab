@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import org.miguelff.alicebot.ab.IOResource;
 import org.miguelff.alicebot.ab.ResourceProvider;
+import org.miguelff.alicebot.ab.io.IOResource;
 
 /**
  * Manage client predicates
@@ -39,7 +39,7 @@ public class Predicates extends HashMap<String, String> {
      * @return            predicate value
      */
     public String put(String key, String value) {
-        if (MagicBooleans.trace_mode) System.out.println("Setting predicate "+key+" to "+value);
+        if (MagicBooleans.trace_mode) ResourceProvider.Log.info("Setting predicate "+key+" to "+value);
         return super.put(key, value);
     }
 

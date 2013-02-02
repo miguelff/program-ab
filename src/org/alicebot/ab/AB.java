@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.alicebot.ab.utils.IOUtils;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
 public class AB {
     /**
@@ -48,7 +49,7 @@ public class AB {
      */
     public static void productivity (int runCompletedCnt, Timer timer) {
         float time = timer.elapsedTimeMins();
-        System.out.println("Completed "+runCompletedCnt+" in "+time+" min. Productivity "+(float)runCompletedCnt/time+" cat/min");
+        ResourceProvider.Log.info("Completed "+runCompletedCnt+" in "+time+" min. Productivity "+(float)runCompletedCnt/time+" cat/min");
     }
 
        /** saves a new AIML category and increments runCompletedCnt
@@ -68,7 +69,7 @@ public class AB {
             bot.writeAIMLIFFiles();
             runCompletedCnt++;
         }
-        else System.out.println("Invalid Category "+c.validationMessage);
+        else ResourceProvider.Log.info("Invalid Category "+c.validationMessage);
     }
 
        /** mark a category as deleted
@@ -92,14 +93,14 @@ public class AB {
         c.setFilename(MagicStrings.unfinished_aiml_file);
         c.setTemplate(MagicStrings.unfinished_template);
         bot.unfinishedGraph.addCategory(c);
-        System.out.println(bot.unfinishedGraph.getCategories().size() + " unfinished categories");
+        ResourceProvider.Log.info(bot.unfinishedGraph.getCategories().size() + " unfinished categories");
         bot.writeUnfinishedIFCategories();
     }
     public static void abwq(Bot bot) {
         Timer timer = new Timer();
         timer.start();
         bot.classifyInputs(logfile);
-        System.out.println(timer.elapsedTimeSecs() + " classifying inputs");
+        ResourceProvider.Log.info(timer.elapsedTimeSecs() + " classifying inputs");
         bot.writeQuit();
     }
        /**  magically suggests new patterns for a bot.
@@ -117,20 +118,20 @@ public class AB {
         Timer timer = new Timer();
         bot.brain.nodeStats();
         timer.start();
-        System.out.println("Graphing inputs");
+        ResourceProvider.Log.info("Graphing inputs");
         bot.graphInputs(logFile);
-        System.out.println(timer.elapsedTimeSecs() + " seconds Graphing inputs");
+        ResourceProvider.Log.info(timer.elapsedTimeSecs() + " seconds Graphing inputs");
         //bot.inputGraph.printgraph();
         timer.start();
-        System.out.println("Finding Patterns");
+        ResourceProvider.Log.info("Finding Patterns");
         bot.findPatterns();
-        System.out.println(bot.suggestedCategories.size()+" suggested categories");
-        System.out.println(timer.elapsedTimeSecs() + " seconds finding patterns");
+        ResourceProvider.Log.info(bot.suggestedCategories.size()+" suggested categories");
+        ResourceProvider.Log.info(timer.elapsedTimeSecs() + " seconds finding patterns");
         timer.start();
         bot.patternGraph.nodeStats();
-        System.out.println("Classifying Inputs");
+        ResourceProvider.Log.info("Classifying Inputs");
         bot.classifyInputs(logFile);
-        System.out.println(timer.elapsedTimeSecs() + " classifying inputs");
+        ResourceProvider.Log.info(timer.elapsedTimeSecs() + " classifying inputs");
     }
 
        /** train the bot through a terminal interaction
@@ -159,22 +160,22 @@ public class AB {
         if (filter_atomic_mode) browserCategories = filteredAtomicCategories;
         else if (filter_wild_mode) browserCategories = filteredWildCategories;
         else browserCategories = bot.suggestedCategories;
-        // System.out.println(filteredAtomicCategories.size()+" filtered suggested categories");
+        // ResourceProvider.Log.info(filteredAtomicCategories.size()+" filtered suggested categories");
         for (Category c : browserCategories)  {
             try {
             ArrayList<Object> samples = new ArrayList<Object>(c.getMatches());
             Collections.shuffle(samples);
             int sampleSize = Math.min(MagicNumbers.displayed_input_sample_size, c.getMatches().size());
             for (int i = 0; i < sampleSize; i++) {
-                System.out.println("" + samples.get(i));
+                ResourceProvider.Log.info("" + samples.get(i));
             }
-            System.out.println("["+c.getActivationCnt()+"] "+c.inputThatTopic());
+            ResourceProvider.Log.info("["+c.getActivationCnt()+"] "+c.inputThatTopic());
             productivity(runCompletedCnt, timer);
             String textLine = "" + IOUtils.readInputTextLine();
             terminalInteractionStep(bot, "", textLine, c);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                System.out.println("Returning to Category Browser");
+                ResourceProvider.Log.info("Returning to Category Browser");
             }
         }
     }
@@ -196,7 +197,7 @@ public class AB {
                String pattern = textLine.substring(index, jndex);
                c.setPattern(pattern);
                textLine = textLine.substring(kndex, textLine.length());
-               System.out.println("Got pattern = "+pattern+" template = "+textLine);
+               ResourceProvider.Log.info("Got pattern = "+pattern+" template = "+textLine);
            }
        }
        String botThinks = "";
@@ -234,7 +235,7 @@ public class AB {
 
                passed.writeAIMLSet();
                testSet.writeAIMLSet();
-               System.out.println("Wrote passed test cases");
+               ResourceProvider.Log.info("Wrote passed test cases");
            }*/
            System.exit(0);
        }

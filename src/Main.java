@@ -38,15 +38,15 @@ public class Main {
 	
     public static void main (String[] args) {    	
     	if (System.getenv("DEFAULT_FS_DIRECTORY") == null){
-    		System.out.println("Please export DEFAULT_FS_DIRECTORY, to your robot's KB. For instance:");
-    		System.out.println("export DEFAULT_FS_DIRECTORY=/tmp");
+    		ResourceProvider.Log.info("Please export DEFAULT_FS_DIRECTORY, to your robot's KB. For instance:");
+    		ResourceProvider.Log.info("export DEFAULT_FS_DIRECTORY=/tmp");
     		System.exit(-1);
-    	}
+    	}    	
         String botName = "super";
         String action = "chat";
-        System.out.println(MagicStrings.programNameVersion);
+        ResourceProvider.Log.info(MagicStrings.programNameVersion);
         for (String s : args) {
-            System.out.println(s);
+            ResourceProvider.Log.info(s);
             String[] splitArg = s.split("=");
             if (splitArg.length >= 2) {
                 String option = splitArg[0];
@@ -57,7 +57,7 @@ public class Main {
                 else MagicBooleans.trace_mode = false;
             }
         }
-        System.out.println("trace mode = "+MagicBooleans.trace_mode);
+        ResourceProvider.Log.info("trace mode = "+MagicBooleans.trace_mode);
         Graphmaster.enableShortCuts = true;
         Bot bot = new Bot(botName, action); //
         if (bot.brain.getCategories().size() < 100) bot.brain.printgraph();
@@ -72,6 +72,7 @@ public class Main {
         if (action.equals("aiml2csv")) bot.writeAIMLIFFiles();
         else if (action.equals("csv2aiml")) bot.writeAIMLFiles();
     }
+    
     public static void testAB (Bot bot) {
         MagicBooleans.trace_mode = true;
         AB.ab(bot);
@@ -79,8 +80,7 @@ public class Main {
     }
    
     public static void testChat (Bot bot, boolean traceMode) {
-        Chat  = new Chat(bot);
-//        bot.preProcessor.normalizeFile("c:/ab/bots/super/aiml/thats.txt", "c:/ab/bots/super/aiml/normalthats.txt");
+        Chat  chatSession = new Chat(bot);
         bot.brain.nodeStats();
         MagicBooleans.trace_mode = traceMode;
         String textLine="";
@@ -96,31 +96,31 @@ public class Main {
             else if (textLine.equals("ab")) testAB(bot);
             else {
                 String request = textLine;
-                if (MagicBooleans.trace_mode) System.out.println("STATE="+request+":THAT="+chatSession.thatHistory.get(0).get(0)+":TOPIC="+chatSession.predicates.get("topic"));
+                if (MagicBooleans.trace_mode) ResourceProvider.Log.info("STATE="+request+":THAT="+chatSession.thatHistory.get(0).get(0)+":TOPIC="+chatSession.predicates.get("topic"));
                 String response = chatSession.multisentenceRespond(request);
-                System.out.println("Robot: "+response);
+                ResourceProvider.Log.info("Robot: "+response);
 
             }
 
         }
     }
+    
     public static void testBotChat () {
         Bot bot = new Bot("alice");
-        System.out.println(bot.brain.upgradeCnt+" brain upgrades");
+        ResourceProvider.Log.info(bot.brain.upgradeCnt+" brain upgrades");
         bot.brain.nodeStats();
-        //bot.brain.printgraph();
         Chat chatSession = new Chat(bot);
         String request = "Hello.  How are you?  What is your name?  Tell me about yourself.";
         String response = chatSession.multisentenceRespond(request);
-        System.out.println("Human: "+request);
-        System.out.println("Robot: "+response);
+        ResourceProvider.Log.info("Human: "+request);
+        ResourceProvider.Log.info("Robot: "+response);
     }
     
     public static void testSuite (Bot bot, String filename) {
         try{
             AB.passed.readAIMLSet(bot);
             AB.testSet.readAIMLSet(bot);
-            System.out.println("Passed "+AB.passed.size()+" samples.");
+            ResourceProvider.Log.info("Passed "+AB.passed.size()+" samples.");
             String textLine="";
             Chat chatSession = new Chat(bot);
             
@@ -137,11 +137,11 @@ public class Main {
             for (String request : sampleArray) {
                 if (request.startsWith("Human: ")) request = request.substring("Human: ".length(), request.length());
                 Category c = new Category(0, bot.preProcessor.normalize(request), "*", "*", MagicStrings.blank_template, MagicStrings.null_aiml_file);
-                if (AB.passed.contains(request)) System.out.println("--> Already passed "+request);
+                if (AB.passed.contains(request)) ResourceProvider.Log.info("--> Already passed "+request);
                 else if (!bot.deletedGraph.existsCategory(c) && !AB.passed.contains(request)) {
                     String response = chatSession.multisentenceRespond(request);
-                    System.out.println(count+". Human: "+request);
-                    System.out.println(count+". Robot: "+response);
+                    ResourceProvider.Log.info(count+". Human: "+request);
+                    ResourceProvider.Log.info(count+". Robot: "+response);
 					textLine = IOUtils.readInputTextLine();
                     AB.terminalInteractionStep(bot, request, textLine, c);
                     count += 1;

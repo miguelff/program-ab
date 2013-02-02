@@ -3,8 +3,8 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
 import org.alicebot.ab.utils.IOUtils;
-import org.miguelff.alicebot.ab.IOResource;
 import org.miguelff.alicebot.ab.ResourceProvider;
+import org.miguelff.alicebot.ab.io.IOResource;
 /**
  * Class encapsulating a chat session between a bot and a client
  */
@@ -72,7 +72,7 @@ public class Chat {
                 System.out.print("Human: ");
 				request = IOUtils.readInputTextLine();
                 response = multisentenceRespond(request);
-                System.out.println("Robot: "+response);
+                ResourceProvider.Log.info("Robot: "+response);
                 bw.write("Human: "+request);
                 bw.newLine();
                 bw.write("Robot: "+response);
@@ -103,7 +103,7 @@ public class Chat {
         String sentences[] = bot.preProcessor.sentenceSplit(normResponse);
         for (int i = 0; i < sentences.length; i++) {
           that = sentences[i];
-          //System.out.println("That "+i+" '"+that+"'");
+          //ResourceProvider.Log.info("That "+i+" '"+that+"'");
           if (that.trim().equals("")) that = MagicStrings.default_that;
           contextThatHistory.add(that);
         }
@@ -141,20 +141,20 @@ public class Chat {
         try {
         String norm = bot.preProcessor.normalize(request);
         norm = JapaneseTokenizer.morphSentence(norm);
-        if (MagicBooleans.trace_mode) System.out.println("normalized = "+norm);
+        if (MagicBooleans.trace_mode) ResourceProvider.Log.info("normalized = "+norm);
         String sentences[] = bot.preProcessor.sentenceSplit(norm);
         History<String> contextThatHistory = new History<String>("contextThat");
         for (int i = 0; i < sentences.length; i++) {
-            //System.out.println("Human: "+sentences[i]);
+            //ResourceProvider.Log.info("Human: "+sentences[i]);
             AIMLProcessor.trace_count = 0;
             String reply = respond(sentences[i], contextThatHistory);
             response += "  "+reply;
-            //System.out.println("Robot: "+reply);
+            //ResourceProvider.Log.info("Robot: "+reply);
         }
         requestHistory.add(request);
         responseHistory.add(response);
         thatHistory.add(contextThatHistory);
-        //if (MagicBooleans.trace_mode)  System.out.println(matchTrace);
+        //if (MagicBooleans.trace_mode)  ResourceProvider.Log.info(matchTrace);
         } catch (Exception ex) {
             ex.printStackTrace();
             return MagicStrings.error_bot_response;

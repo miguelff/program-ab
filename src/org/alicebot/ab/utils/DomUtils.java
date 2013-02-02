@@ -60,7 +60,7 @@ public class DomUtils {
             t.setOutputProperty(OutputKeys.INDENT, "no");
             t.transform(new DOMSource(node), new StreamResult(sw));
         } catch (TransformerException te) {
-            System.out.println("nodeToString Transformer Exception");
+            ResourceProvider.Log.info("nodeToString Transformer Exception");
         }
         return sw.toString();
     }

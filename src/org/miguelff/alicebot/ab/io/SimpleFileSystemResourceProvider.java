@@ -1,4 +1,4 @@
-package org.miguelff.alicebot.ab;
+package org.miguelff.alicebot.ab.io;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,7 +10,7 @@ import java.io.OutputStream;
  * @author miguelff
  *
  */
-class SimpleFileSystemResourceProvider implements IOResourceProvider {
+public class SimpleFileSystemResourceProvider implements IOResourceProvider {
 	public InputStream inputFor(String resourceName) {
 		return getResource(resourceName).input();
 	}

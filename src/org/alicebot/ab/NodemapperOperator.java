@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.miguelff.alicebot.ab.ResourceProvider;
+
 public class NodemapperOperator {
     /**
      * number of branches from node
@@ -82,7 +84,7 @@ public class NodemapperOperator {
      * @return        true or false
      */
    public static boolean containsKey(Nodemapper node, String key)  {
-       //System.out.println("containsKey: Node="+node+" Map="+node.map);
+       //ResourceProvider.Log.info("containsKey: Node="+node+" Map="+node.map);
        if (node.map != null) {
            return node.map.containsKey(key) ;
        }
@@ -101,7 +103,7 @@ public class NodemapperOperator {
         Set set = keySet(node);
         Iterator iter = set.iterator();
         while (iter.hasNext()) {
-            System.out.println("" + iter.next());
+            ResourceProvider.Log.info("" + iter.next());
         }
     }
 
@@ -139,7 +141,7 @@ public class NodemapperOperator {
      * @param node  Nodemapper object
      */
     public static void upgrade(Nodemapper node) {
-        //System.out.println("Upgrading "+node.id);
+        //ResourceProvider.Log.info("Upgrading "+node.id);
         //node.type = MagicNumbers.hash_node_mapper;
         node.map = new HashMap<String, Nodemapper>();
         node.map.put(node.key, node.value);

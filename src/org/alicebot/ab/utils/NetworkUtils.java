@@ -10,12 +10,10 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-
-import org.w3c.dom.Node;
+import org.miguelff.alicebot.ab.ResourceProvider;
 
 
 public class NetworkUtils {
@@ -31,7 +29,7 @@ public class NetworkUtils {
                         String ipAddress =  inetAddress.getHostAddress().toString();
                         int p = ipAddress.indexOf("%");
                         if (p > 0) ipAddress = ipAddress.substring(0, p);
-                        System.out.println("--> localIPAddress = "+ipAddress);
+                        ResourceProvider.Log.info("--> localIPAddress = "+ipAddress);
                         return ipAddress;
                     }
                 }
@@ -61,7 +59,7 @@ public class NetworkUtils {
 
 
 	public static String spec(String host, String botid, String custid, String input) {
-		//System.out.println("--> custid = "+custid);
+		//ResourceProvider.Log.info("--> custid = "+custid);
 		String spec = "";
 		if (custid.equals("0"))      // get custid on first transaction with Pandorabots
 			spec =    String.format("%s?botid=%s&input=%s",

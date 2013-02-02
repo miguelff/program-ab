@@ -20,6 +20,8 @@ package org.alicebot.ab;
 */
 import java.util.Comparator;
 
+import org.miguelff.alicebot.ab.ResourceProvider;
+
 /**
  * structure representing an AIML category and operations on Category
  */
@@ -184,7 +186,7 @@ public class Category {
     public void addMatch (String input) {
         if (matches == null) {
             String setName = this.inputThatTopic().replace("*", "STAR").replace("_", "UNDERSCORE").replace(" ","-").replace("<THAT>","THAT").replace("<TOPIC>","TOPIC");
-           // System.out.println("Created match set "+setName);
+           // ResourceProvider.Log.info("Created match set "+setName);
             matches = new AIMLSet(setName);
         }
         matches.add(input);
@@ -221,7 +223,7 @@ public class Category {
      */
     public static Category IFToCategory(String IF) {
         String[] split = IF.split(MagicStrings.aimlif_split_char);
-        //System.out.println("Read: "+split);
+        //ResourceProvider.Log.info("Read: "+split);
         return new Category(Integer.parseInt(split[0]), split[1], split[2], split[3], lineToTemplate(split[4]), split[5]);
      }
 
@@ -231,7 +233,7 @@ public class Category {
      * @return           category in AIML format
      */
     public static String categoryToIF(Category category) {
-        //System.out.println("categoryToIF: template="+templateToLine(category.getTemplate()));
+        //ResourceProvider.Log.info("categoryToIF: template="+templateToLine(category.getTemplate()));
         String c = MagicStrings.aimlif_split_char;
         return category.getActivationCnt()+c+category.getPattern()+c+category.getThat()+c+category.getTopic()+c+templateToLine(category.getTemplate())+c+category.getFilename();
     }
@@ -253,7 +255,7 @@ public class Category {
             pattern = pattern+" "+w;
         }
         pattern = pattern.trim();
-        if (pattern.contains("type")) System.out.println("Rebuilt pattern "+pattern);
+        if (pattern.contains("type")) ResourceProvider.Log.info("Rebuilt pattern "+pattern);
 
         String NL = System.getProperty("line.separator");
         NL = "\n";
@@ -281,7 +283,7 @@ public class Category {
         for (int i = 0; i < words.length; i++) {
             //String word = words[i];
             /*if (!(word.matches("[\\p{Hiragana}\\p{Katakana}\\p{Han}\\p{Latin}]*+") || word.equals("*") || word.equals("_"))) {
-                System.out.println("Invalid pattern word "+word);
+                ResourceProvider.Log.info("Invalid pattern word "+word);
                 return false;
             }*/
         }
@@ -324,7 +326,7 @@ public class Category {
         this.activationCnt = activationCnt;
         matches = null;
         this.categoryNumber = categoryCnt++;
-        //System.out.println("Creating "+categoryNumber+" "+inputThatTopic());
+        //ResourceProvider.Log.info("Creating "+categoryNumber+" "+inputThatTopic());
     }
 
     /**

@@ -3,9 +3,10 @@ package org.alicebot.ab.utils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import org.miguelff.alicebot.ab.ResourceProvider;
 
 
 public class CalendarUtils {
@@ -38,7 +39,7 @@ public class CalendarUtils {
         if (jformat == null) jformat = "EEE MMM dd HH:mm:ss zzz yyyy";
         if (locale == null) locale = Locale.US.getISO3Country();
         if (timezone == null) timezone = TimeZone.getDefault().getDisplayName();
-        //System.out.println("Format = "+format+" Locale = "+locale+" Timezone = "+timezone);
+        //ResourceProvider.Log.info("Format = "+format+" Locale = "+locale+" Timezone = "+timezone);
         String dateAsString = new Date().toString();
         try {
         SimpleDateFormat simpleDateFormat =
@@ -46,9 +47,9 @@ public class CalendarUtils {
           dateAsString = simpleDateFormat.format(new Date());
         }
         catch (Exception ex) {
-            System.out.println("Bad date: Format = "+jformat+" Locale = "+locale+" Timezone = "+timezone);
+            ResourceProvider.Log.info("Bad date: Format = "+jformat+" Locale = "+locale+" Timezone = "+timezone);
         }
-        System.out.println(dateAsString);
+        ResourceProvider.Log.info(dateAsString);
         return dateAsString;
     }
 }

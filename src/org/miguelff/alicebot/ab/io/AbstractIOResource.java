@@ -1,10 +1,11 @@
-package org.miguelff.alicebot.ab;
+package org.miguelff.alicebot.ab.io;
 
-abstract class AbstractResource implements IOResource {
+
+abstract class AbstractIOResource implements IOResource {
 	
 	private String name;
 	
-	public AbstractResource(String name) {
+	public AbstractIOResource(String name) {
 		this.name = name;
 	}
 

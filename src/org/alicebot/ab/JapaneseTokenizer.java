@@ -57,7 +57,7 @@ public class JapaneseTokenizer {
             if (j < sentence.length()) sentence = sentence.substring(j, sentence.length()); else sentence = "";
             System.out.print("Start index: " + matcher.start());
             System.out.print(" End index: " + matcher.end() + " ");
-            System.out.println(matcher.group());
+            ResourceProvider.Log.info(matcher.group());
         }
         result += " "+buildFragment(sentence);
         while (result.contains("$ ")) result = result.replace("$ ", "$");
@@ -68,10 +68,10 @@ public class JapaneseTokenizer {
         String result = "";
         for (char c : sentence.toCharArray()) {
             if (japaneseUnicodeBlocks.contains(Character.UnicodeBlock.of(c))) {
-                //System.out.println(c + " is a Japanese character");
+                //ResourceProvider.Log.info(c + " is a Japanese character");
                 result = result+" "+c+" ";
             } else {
-                //System.out.println(c + " is not a Japanese character");
+                //ResourceProvider.Log.info(c + " is not a Japanese character");
                 result = result + c;
             }
         }
@@ -93,7 +93,7 @@ public class JapaneseTokenizer {
         for(Morpheme e : Tagger.parse(fragment)) {
             result += e.surface+" ";
             //
-            // System.out.println("Feature "+e.feature+" Surface="+e.surface);
+            // ResourceProvider.Log.info("Feature "+e.feature+" Surface="+e.surface);
         }
         return result.trim();
     }
@@ -118,7 +118,7 @@ public class JapaneseTokenizer {
             if (j < sentence.length()) sentence = sentence.substring(j, sentence.length()); else sentence = "";
             //System.out.print("Start index: " + matcher.start());
             //System.out.print("End index: " + matcher.end() + " ");
-            //System.out.println(matcher.group());
+            //ResourceProvider.Log.info(matcher.group());
         }
         result += " "+buildFragment(sentence);
         while (result.contains("$ ")) result = result.replace("$ ", "$");

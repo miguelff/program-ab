@@ -1,4 +1,4 @@
-package org.miguelff.alicebot.ab;
+package org.miguelff.alicebot.ab.io;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 /**
  * Provides resources from the file system, proxying old behavior of the program.
  * No mutex. No anything, this class is unsafe.
@@ -17,7 +18,7 @@ import java.util.List;
  * @author miguelff
  * 
  */
-class SimpleFileSystemResource extends AbstractResource  {
+public class SimpleFileSystemResource extends AbstractIOResource  {
 
 	private static final String DEFAULT_FS_ROOT = System.getenv("DEFAULT_FS_DIRECTORY");
 
@@ -25,11 +26,11 @@ class SimpleFileSystemResource extends AbstractResource  {
 	private File file;
 
 	
-	SimpleFileSystemResource(String resourceName) {
+	public SimpleFileSystemResource(String resourceName) {
 		this(resourceName, DEFAULT_FS_ROOT);
 	}
 
-	SimpleFileSystemResource(String resourceName, String root) {		
+	public SimpleFileSystemResource(String resourceName, String root) {		
 		super(resourceName);
 		this.root = root;
 		this.file = new File(root,resourceName);			
