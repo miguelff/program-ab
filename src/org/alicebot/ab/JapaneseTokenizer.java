@@ -116,9 +116,6 @@ public class JapaneseTokenizer {
             tag = sentence.substring(i, j);
             result += " "+buildFragment(prefix)+" "+tag;
             if (j < sentence.length()) sentence = sentence.substring(j, sentence.length()); else sentence = "";
-            //System.out.print("Start index: " + matcher.start());
-            //System.out.print("End index: " + matcher.end() + " ");
-            //ResourceProvider.Log.info(matcher.group());
         }
         result += " "+buildFragment(sentence);
         while (result.contains("$ ")) result = result.replace("$ ", "$");

@@ -94,7 +94,7 @@ public class Predicates extends HashMap<String, String> {
                 getPredicateDefaultsFromInputStream(file.input());
             }
         }catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           ResourceProvider.Log.error(e.getMessage());
         }
     }
 }

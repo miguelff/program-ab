@@ -72,7 +72,7 @@ public class AIMLSet extends HashSet<String> {
             //Close the output stream
             out.close();
         }catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           ResourceProvider.Log.error("Error: " + e.getMessage());
         }
     }
     public int readAIMLSetFromInputStream(InputStream in, Bot bot)  {
@@ -115,7 +115,7 @@ public class AIMLSet extends HashSet<String> {
             }
             else ResourceProvider.Log.info(MagicStrings.sets_path+"/"+setName+".txt not found");
         }catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           ResourceProvider.Log.error("Error: " + e.getMessage());
         }
 
     }

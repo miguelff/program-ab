@@ -553,7 +553,7 @@ public class Bot {
             //Close the input stream
             br.close();
         } catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           ResourceProvider.Log.error("Error: " + e.getMessage());
         }
     }
 
@@ -582,7 +582,7 @@ public class Bot {
             //Close the input stream
             br.close();
         }catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           ResourceProvider.Log.error("Error: " + e.getMessage());
         }
     }
 
@@ -626,7 +626,7 @@ public class Bot {
             //Close the input stream
             br.close();
         }catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           ResourceProvider.Log.error("Error: " + e.getMessage());
         }
         return categories;
     }

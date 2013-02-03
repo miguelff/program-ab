@@ -38,15 +38,15 @@ public class Main {
 	
     public static void main (String[] args) {    	
     	if (System.getenv("DEFAULT_FS_DIRECTORY") == null){
-    		ResourceProvider.Log.info("Please export DEFAULT_FS_DIRECTORY, to your robot's KB. For instance:");
-    		ResourceProvider.Log.info("export DEFAULT_FS_DIRECTORY=/tmp");
+    		System.out.println("Please export DEFAULT_FS_DIRECTORY, to your robot's KB. For instance:");
+    		System.out.println("export DEFAULT_FS_DIRECTORY=/tmp");
     		System.exit(-1);
     	}    	
         String botName = "super";
         String action = "chat";
-        ResourceProvider.Log.info(MagicStrings.programNameVersion);
+        System.out.println(MagicStrings.programNameVersion);
         for (String s : args) {
-            ResourceProvider.Log.info(s);
+            System.out.println(s);
             String[] splitArg = s.split("=");
             if (splitArg.length >= 2) {
                 String option = splitArg[0];
@@ -57,7 +57,7 @@ public class Main {
                 else MagicBooleans.trace_mode = false;
             }
         }
-        ResourceProvider.Log.info("trace mode = "+MagicBooleans.trace_mode);
+        System.out.println("trace mode = "+MagicBooleans.trace_mode);
         Graphmaster.enableShortCuts = true;
         Bot bot = new Bot(botName, action); //
         if (bot.brain.getCategories().size() < 100) bot.brain.printgraph();
@@ -96,9 +96,9 @@ public class Main {
             else if (textLine.equals("ab")) testAB(bot);
             else {
                 String request = textLine;
-                if (MagicBooleans.trace_mode) ResourceProvider.Log.info("STATE="+request+":THAT="+chatSession.thatHistory.get(0).get(0)+":TOPIC="+chatSession.predicates.get("topic"));
+                if (MagicBooleans.trace_mode) System.out.println("STATE="+request+":THAT="+chatSession.thatHistory.get(0).get(0)+":TOPIC="+chatSession.predicates.get("topic"));
                 String response = chatSession.multisentenceRespond(request);
-                ResourceProvider.Log.info("Robot: "+response);
+                System.out.println("Robot: "+response);
 
             }
 
@@ -107,20 +107,20 @@ public class Main {
     
     public static void testBotChat () {
         Bot bot = new Bot("alice");
-        ResourceProvider.Log.info(bot.brain.upgradeCnt+" brain upgrades");
+        System.out.println(bot.brain.upgradeCnt+" brain upgrades");
         bot.brain.nodeStats();
         Chat chatSession = new Chat(bot);
         String request = "Hello.  How are you?  What is your name?  Tell me about yourself.";
         String response = chatSession.multisentenceRespond(request);
-        ResourceProvider.Log.info("Human: "+request);
-        ResourceProvider.Log.info("Robot: "+response);
+        System.out.println("Human: "+request);
+        System.out.println("Robot: "+response);
     }
     
     public static void testSuite (Bot bot, String filename) {
         try{
             AB.passed.readAIMLSet(bot);
             AB.testSet.readAIMLSet(bot);
-            ResourceProvider.Log.info("Passed "+AB.passed.size()+" samples.");
+            System.out.println("Passed "+AB.passed.size()+" samples.");
             String textLine="";
             Chat chatSession = new Chat(bot);
             
@@ -137,11 +137,11 @@ public class Main {
             for (String request : sampleArray) {
                 if (request.startsWith("Human: ")) request = request.substring("Human: ".length(), request.length());
                 Category c = new Category(0, bot.preProcessor.normalize(request), "*", "*", MagicStrings.blank_template, MagicStrings.null_aiml_file);
-                if (AB.passed.contains(request)) ResourceProvider.Log.info("--> Already passed "+request);
+                if (AB.passed.contains(request)) System.out.println("--> Already passed "+request);
                 else if (!bot.deletedGraph.existsCategory(c) && !AB.passed.contains(request)) {
                     String response = chatSession.multisentenceRespond(request);
-                    ResourceProvider.Log.info(count+". Human: "+request);
-                    ResourceProvider.Log.info(count+". Robot: "+response);
+                    System.out.println(count+". Human: "+request);
+                    System.out.println(count+". Robot: "+response);
 					textLine = IOUtils.readInputTextLine();
                     AB.terminalInteractionStep(bot, request, textLine, c);
                     count += 1;
@@ -150,7 +150,7 @@ public class Main {
             //Close the input stream
             br.close();
         } catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           System.err.println("Error: " + e.getMessage());
         }
     }
 

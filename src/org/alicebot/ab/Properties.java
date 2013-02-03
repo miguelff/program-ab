@@ -80,7 +80,7 @@ public class Properties extends HashMap<String, String> {
                 getPropertiesFromInputStream(file.input());               
             }
         } catch (Exception e){//Catch exception if any
-            System.err.println("Error: " + e.getMessage());
+           ResourceProvider.Log.error(e.getMessage());
         }
     }
 }
