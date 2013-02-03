@@ -1,19 +1,20 @@
 package org.miguelff.alicebot.ab.io;
 
 
-abstract class AbstractIOResource implements IOResource {
+public abstract class AbstractIOResource implements IOResource {
 	
 	private String name;
 	
 	public AbstractIOResource(String name) {
-		this.name = name;
+		this.name = normalize(name);
 	}
 
-	public String getName(){
+	public String name(){
 		return name;
 	}
 
-	public boolean exists(){
-		return this != IOResource.NULL;
+	private String normalize(String name) {
+		return name.replace("//","/");
 	}
+
 }

@@ -12,7 +12,7 @@ final class NullResource implements IOResource {
 	private NullResource(){}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -49,11 +49,6 @@ final class NullResource implements IOResource {
 	@Override
 	public boolean exists() {
 		return false;
-	}
-
-	@Override
-	public OutputStream appendedOutput() {
-		throw new UnsupportedOperationException();
 	}
 	
 }

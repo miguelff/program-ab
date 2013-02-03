@@ -32,17 +32,13 @@ import org.alicebot.ab.Graphmaster;
 import org.alicebot.ab.MagicBooleans;
 import org.alicebot.ab.MagicStrings;
 import org.alicebot.ab.utils.IOUtils;
+import org.miguelff.alicebot.ab.Config;
 import org.miguelff.alicebot.ab.ResourceProvider;
 
 public class Main {
 	
     public static void main (String[] args) {    	
-    	if (System.getenv("DEFAULT_FS_DIRECTORY") == null){
-    		System.out.println("Please export DEFAULT_FS_DIRECTORY, to your robot's KB. For instance:");
-    		System.out.println("export DEFAULT_FS_DIRECTORY=/tmp");
-    		System.exit(-1);
-    	}    	
-        String botName = "super";
+        String botName = Config.BOT_NAME != null ? Config.BOT_NAME : "super";
         String action = "chat";
         System.out.println(MagicStrings.programNameVersion);
         for (String s : args) {

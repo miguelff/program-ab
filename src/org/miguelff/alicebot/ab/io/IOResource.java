@@ -17,13 +17,11 @@ public interface IOResource {
 	
 	public static final IOResource NULL = NullResource.instance;
 	
-	public String getName();
+	public String name();
 
 	public InputStream input();
 
 	public OutputStream output();
-	
-	public OutputStream appendedOutput();
 	
 	public List<IOResource> getNested();
 	

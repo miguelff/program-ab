@@ -57,35 +57,6 @@ public class Chat {
     }
 
     /**
-     * Chat session terminal interaction
-     */
-    public void chat () {
-        BufferedWriter bw = null;
-        String logFile = MagicStrings.log_path+"/log_"+customerId+".txt";
-        try {
-            //Construct the bw object
-        	IOResource file = ResourceProvider.IO.getResource(logFile);        	
-            bw = new BufferedWriter(new OutputStreamWriter(file.appendedOutput())) ;
-            String request="SET PREDICATES";
-            String response = multisentenceRespond(request);
-            while (!request.equals("quit")) {
-                System.out.print("Human: ");
-				request = IOUtils.readInputTextLine();
-                response = multisentenceRespond(request);
-                ResourceProvider.Log.info("Robot: "+response);
-                bw.write("Human: "+request);
-                bw.newLine();
-                bw.write("Robot: "+response);
-                bw.newLine();
-                bw.flush();
-            }
-            bw.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
      * Return bot response to a single sentence input given conversation context
      *
      * @param input         client input

@@ -173,7 +173,7 @@ public class Bot {
                 ResourceProvider.Log.info("Loading AIML files from "+MagicStrings.aiml_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
-                        file = listOfFile.getName();
+                        file = listOfFile.name();
                         if (file.endsWith(".aiml") || file.endsWith(".AIML")) {
                             ResourceProvider.Log.info(file);
                             try {
@@ -209,7 +209,8 @@ public class Bot {
                 ResourceProvider.Log.info("Loading AIML files from "+MagicStrings.aimlif_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
-                        file = listOfFile.getName();
+                        file = listOfFile.name();
+                        file = file.substring(file.lastIndexOf("/",file.length()));
                         if (file.endsWith(MagicStrings.aimlif_file_suffix) || file.endsWith(MagicStrings.aimlif_file_suffix.toUpperCase())) {
                             //ResourceProvider.Log.info(file);
                             try {
@@ -676,10 +677,10 @@ public class Bot {
                 ResourceProvider.Log.info("Loading AIML Sets files from "+MagicStrings.sets_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
-                        file = listOfFile.getName();
+                        file = listOfFile.name();
                         if (file.endsWith(".txt") || file.endsWith(".TXT")) {
                             ResourceProvider.Log.info(file);
-                            String setName = file.substring(0, file.length()-".txt".length());
+                            String setName = file.substring(file.lastIndexOf("/"), file.length()-".txt".length());
                             ResourceProvider.Log.info("Read AIML Set "+setName);
                             AIMLSet aimlSet = new AIMLSet(setName);
                             aimlSet.readAIMLSet(this);
@@ -709,10 +710,10 @@ public class Bot {
                 ResourceProvider.Log.info("Loading AIML Map files from "+MagicStrings.maps_path);
                 for (IOResource listOfFile : listOfFiles) {
                     if (! listOfFile.hasNested()) {
-                        file = listOfFile.getName();
+                        file = listOfFile.name();
                         if (file.endsWith(".txt") || file.endsWith(".TXT")) {
                             ResourceProvider.Log.info(file);
-                            String mapName = file.substring(0, file.length()-".txt".length());
+                            String mapName = file.substring(file.lastIndexOf("/"), file.length()-".txt".length());
                             ResourceProvider.Log.info("Read AIML Map "+mapName);
                             AIMLMap aimlMap = new AIMLMap(mapName);
                             aimlMap.readAIMLMap(this);

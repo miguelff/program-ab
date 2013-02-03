@@ -26,61 +26,6 @@ public class JapaneseTokenizer {
     }};
 
 
-    /*public static ArrayList<String> tokenize(String sentence) {
-         ArrayList<String> result = new ArrayList<String>();
-         //Tokenizer tokenizer = Tokenizer.builder().build();
-         for (Token token : tokenizer.tokenize(sentence)) {
-             result.add(token.getSurfaceForm());
-         }
-         return result;
-    }
-    public static String buildFragment(String fragment) {
-        ArrayList<String> tokens = tokenize(fragment);
-        String result = "";
-        for (String word : tokens) {
-            result += " "+word;
-        }
-        return result.trim();
-    }*/
-  /*  public static String morphSentence (String sentence) {
-
-        Matcher matcher = tagPattern.matcher(sentence);
-        String result = "";
-        while (matcher.find()) {
-            int i = matcher.start();
-            int j = matcher.end();
-
-            String prefix, tag;
-            if (i > 0) prefix = sentence.substring(0, i-1); else prefix = "";
-            tag = sentence.substring(i, j);
-            result += " "+buildFragment(prefix)+" "+tag;
-            if (j < sentence.length()) sentence = sentence.substring(j, sentence.length()); else sentence = "";
-            System.out.print("Start index: " + matcher.start());
-            System.out.print(" End index: " + matcher.end() + " ");
-            ResourceProvider.Log.info(matcher.group());
-        }
-        result += " "+buildFragment(sentence);
-        while (result.contains("$ ")) result = result.replace("$ ", "$");
-        while (result.contains("  ")) result = result.replace("  "," ");
-        return result.trim();
-    }*/        /*
-    public static String morphSentence (String sentence) {
-        String result = "";
-        for (char c : sentence.toCharArray()) {
-            if (japaneseUnicodeBlocks.contains(Character.UnicodeBlock.of(c))) {
-                //ResourceProvider.Log.info(c + " is a Japanese character");
-                result = result+" "+c+" ";
-            } else {
-                //ResourceProvider.Log.info(c + " is not a Japanese character");
-                result = result + c;
-            }
-        }
-        while (result.contains("$ ")) result = result.replace("$ ", "$");
-        while (result.contains("  ")) result = result.replace("  "," ");
-        return result.trim();
-    }
-    */
-
     /**
      * Tokenize a fragment of the input that contains only text
      *
@@ -92,8 +37,6 @@ public class JapaneseTokenizer {
         String result = "";
         for(Morpheme e : Tagger.parse(fragment)) {
             result += e.surface+" ";
-            //
-            // ResourceProvider.Log.info("Feature "+e.feature+" Surface="+e.surface);
         }
         return result.trim();
     }
