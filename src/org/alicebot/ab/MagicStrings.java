@@ -24,7 +24,7 @@ package org.alicebot.ab;
  */
 public class MagicStrings {
 	public static String copyRight = "File: [filename]\nAuthor: [botmaster]\nLast modified: [date]\n\nThis AIML file is part of the [botname] [version] chat bot knowledge base.\n\nThe [botname] brain is Copyright &copy; [YYYY] by [organization].\n\nThe [botname] brain is released under the terms of the GNU Lesser General\nPublic License, as published by the Free Software Foundation.\n\nThis file is distributed WITHOUT ANY WARRANTY; without even the \nimplied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  \n\nFor more information see [url]\n\n\n";
-    public static String programNameVersion = "Program AB 0.0.3.8 beta -- AI Foundation Reference AIML 2.0 implementation";
+    public static String programNameVersion = "Program-ab lite - http://github.com/miguelff/program-ab";
     public static String aimlif_split_char = ",";
     public static String default_bot = "super";
     public static String default_language = "EN";
